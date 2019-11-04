@@ -1,5 +1,6 @@
 package ru.sberbank.demo.app.service.transaction;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.transaction.DepositTransactionException;
@@ -15,8 +16,10 @@ import ru.sberbank.demo.app.repository.TransferTransactionsRepository;
 import ru.sberbank.demo.app.repository.WithdrawTransactionsRepository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class TransactionsServiceImpl implements TransactionsService {
 
     private final AccountsRepository accountsRepository;
@@ -63,7 +66,6 @@ public class TransactionsServiceImpl implements TransactionsService {
         return getWithdrawTransaction(withdrawAmount, getWithdrawAccount(accountId, withdrawAmount));
     }
 
-
     /**
      * Перевод денег со счета на счет
      *
@@ -81,17 +83,27 @@ public class TransactionsServiceImpl implements TransactionsService {
         return getTransferTransaction(fromAccountId, toAccountId, transferAmount);
     }
 
+    private Account getAccount(Long accountId) throws AccountNotFoundException {
+        Optional<Account> accountById = accountsRepository.getAccountById(accountId);
+        if (!accountById.isPresent()) {
+            log.error("Счет с идентификатором" + accountId + "не найден");
+            throw new AccountNotFoundException();
+        }
+        return accountById.get();
+    }
+
     private Account getWithdrawAccount(Long accountId, Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
-        Account account = accountsRepository.getAccountById(accountId).orElseThrow(AccountNotFoundException::new);
+        Account account = getAccount(accountId);
         if (account.getBalance() < withdrawAmount) {
-            throw new WithdrawTransactionException("Имеющейся на счете суммы недостаточно для завершения операции");
+            log.error("Имеющейся на счете " + accountId + " суммы недостаточно для завершения операции.");
+            throw new WithdrawTransactionException("Имеющейся на счете " + accountId + " суммы недостаточно для завершения операции");
         }
         account.setBalance(account.getBalance() - withdrawAmount);
         return account;
     }
 
     private Account getDepositAccount(Long accountId, Long transferAmount) throws AccountNotFoundException {
-        Account account = accountsRepository.getAccountById(accountId).orElseThrow(AccountNotFoundException::new);
+        Account account = getAccount(accountId);
         account.setBalance(account.getBalance() + transferAmount);
         return account;
     }
@@ -103,18 +115,6 @@ public class TransactionsServiceImpl implements TransactionsService {
         return depositTransactionsRepository.save(depositTransaction);
     }
 
-    private TransferTransaction getTransferTransaction(Long fromAccountId, Long toAccountId, Long transferAmount) throws AccountNotFoundException, TransferTransactionException {
-        TransferTransaction transferTransaction = new TransferTransaction();
-        try {
-            transferTransaction.setAccount(getWithdrawAccount(fromAccountId, transferAmount));
-        } catch (WithdrawTransactionException e) {
-            throw new TransferTransactionException(e.getMessage());
-        }
-        transferTransaction.setPayee(getDepositAccount(toAccountId, transferAmount));
-        transferTransaction.setTransferAmount(transferAmount);
-        return transferTransactionsRepository.save(transferTransaction);
-    }
-
     private WithdrawTransaction getWithdrawTransaction(Long withdrawAmount, Account account) {
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setAccount(account);
@@ -122,32 +122,52 @@ public class TransactionsServiceImpl implements TransactionsService {
         return withdrawTransactionsRepository.save(withdrawTransaction);
     }
 
+    private TransferTransaction getTransferTransaction(Long fromAccountId, Long toAccountId, Long transferAmount) throws AccountNotFoundException, TransferTransactionException {
+        TransferTransaction transferTransaction = new TransferTransaction();
+        try {
+            transferTransaction.setAccount(getWithdrawAccount(fromAccountId, transferAmount));
+        } catch (WithdrawTransactionException e) {
+            log.error(e.getMessage());
+            throw new TransferTransactionException(e.getMessage());
+        }
+        transferTransaction.setPayee(getDepositAccount(toAccountId, transferAmount));
+        transferTransaction.setTransferAmount(transferAmount);
+        return transferTransactionsRepository.save(transferTransaction);
+    }
+
     private void checkTransferTransactionParams(Long fromAccountId, Long toAccountId, Long transferAmount) throws TransferTransactionException {
         if (fromAccountId.equals(toAccountId)) {
+            log.error("Переводы не осуществляются внутри одного счета: " + fromAccountId);
             throw new TransferTransactionException("Переводы не осуществляются внутри одного счета");
         }
         if (transferAmount < 0) {
+            log.error("Сумма перевода не может быть задана отрицательным числом: " + transferAmount);
             throw new TransferTransactionException("Сумма перевода не может быть задана отрицательным числом: " + transferAmount);
         }
         if (transferAmount == 0) {
+            log.error("Перевод возможен от суммы в 1 у.е. Задано: 0 у.е.");
             throw new TransferTransactionException("Перевод возможен от суммы в 1 у.е. Задано: 0 у.е.");
         }
     }
 
     private void checkWithdrawTransactionParams(Long withdrawAmount) throws WithdrawTransactionException {
         if (withdrawAmount < 0) {
+            log.error("Сумма снятия не может быть задана отрицательным числом: " + withdrawAmount);
             throw new WithdrawTransactionException("Сумма снятия не может быть задана отрицательным числом: " + withdrawAmount);
         }
         if (withdrawAmount == 0) {
+            log.error("Снятие возможно от суммы в 1 у.е. Задано: 0 у.е.");
             throw new WithdrawTransactionException("Снятие возможно от суммы в 1 у.е. Задано: 0 у.е.");
         }
     }
 
-    private void checkDepositTransactionParams(Long transferAmount) throws DepositTransactionException {
-        if (transferAmount < 0) {
-            throw new DepositTransactionException("Сумма пополнения не может быть задана отрицательным числом: " + transferAmount);
+    private void checkDepositTransactionParams(Long depositAmount) throws DepositTransactionException {
+        if (depositAmount < 0) {
+            log.error("Сумма пополнения не может быть задана отрицательным числом: " + depositAmount);
+            throw new DepositTransactionException("Сумма пополнения не может быть задана отрицательным числом: " + depositAmount);
         }
-        if (transferAmount == 0) {
+        if (depositAmount == 0) {
+            log.error("Пополнение возможно на сумму от 1 у.е. Задано: 0 у.е.");
             throw new DepositTransactionException("Пополнение возможно на сумму от 1 у.е. Задано: 0 у.е.");
         }
     }

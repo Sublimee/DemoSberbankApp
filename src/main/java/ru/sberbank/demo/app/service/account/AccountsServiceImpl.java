@@ -1,5 +1,6 @@
 package ru.sberbank.demo.app.service.account;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.ClientNotFoundException;
@@ -7,8 +8,10 @@ import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.repository.AccountsRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class AccountsServiceImpl implements AccountsService {
 
     private final AccountsRepository accountsRepository;
@@ -26,7 +29,11 @@ public class AccountsServiceImpl implements AccountsService {
      */
     @Override
     public List<Account> getClientAccounts(Long clientId) throws ClientNotFoundException {
-        return accountsRepository.getAccountsByClient_Id(clientId).orElseThrow(ClientNotFoundException::new);
+        Optional<List<Account>> accountsByClientId = accountsRepository.getAccountsByClient_Id(clientId);
+        if (!accountsByClientId.isPresent()) {
+            throw new ClientNotFoundException();
+        }
+        return accountsByClientId.get();
     }
 
     /**
@@ -38,7 +45,12 @@ public class AccountsServiceImpl implements AccountsService {
      */
     @Override
     public Account getAccountById(Long accountId) throws AccountNotFoundException {
-        return accountsRepository.getAccountById(accountId).orElseThrow(AccountNotFoundException::new);
+        Optional<Account> accountById = accountsRepository.getAccountById(accountId);
+        if (!accountById.isPresent()) {
+            log.error("Счет с идентификатором" + accountId + "не найден");
+            throw new AccountNotFoundException();
+        }
+        return accountById.get();
     }
 
 }
