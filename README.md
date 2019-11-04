@@ -1,19 +1,34 @@
-# Getting Started
+# Demo Spring Boot Bank Application
 
-### Reference Documentation
-For further reference, please consider the following sections:
+Банк заказывает разработку автоматизированной системы. Задача системы - хранить данные о клиентах банка (ФИО, адрес), счетах клиентов и совершенных транзакциях (пополнение счета/перевод со счета на счет/снятие со счета) и предоставлять доступ к этим данным. Количество клиентов банка - 10 миллионов, количество транзакций – 1 миллион в сутки.
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.2.0.RELEASE/maven-plugin/)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/2.2.0.RELEASE/reference/htmlsingle/#boot-features-developing-web-applications)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/2.2.0.RELEASE/reference/htmlsingle/#boot-features-jpa-and-spring-data)
-* [Spring Boot DevTools](https://docs.spring.io/spring-boot/docs/2.2.0.RELEASE/reference/htmlsingle/#using-boot-devtools)
+Необходимо организовать систему хранения и API с реализацией следующей функциональности:
+- Получение списка всех счетов клиента
+- Получение информации по конкретному счету
+- Снятие денег со счета
+- Пополнение счета
+- Перевод денег со счета на счет
 
-### Guides
-The following guides illustrate how to use some features concretely:
+Built With
+---
+- Spring Boot v2.2
+- PostgreSQL v12
+- HSQLDB для юнит-тестов
+- JMeter 5.1.1 для тестирования производительности
 
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/bookmarks/)
-* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
+
+Результаты тестирования производительности
+---
+Тестирование проводилось на ПК со следующими характеристиками:
+- процессор AMD Phenom II X6 1090T 3.2 GHz
+- 24 GB RAM
+- OS Windows
+
+Разрабатываемое приложение и тестирующее ПО (JMeter) разворачивались в одном окружении. Тестирование проводилось в режиму GUI.
+
+Каждая строка таблицы соответствует определенному типу запроса. Результаты тестирования производительности API на описанном стенде показали среднюю пропускную способность на уровне 183 запроса/сек.
+Увеличение времени тестирования не влияет на показатель производительности.
+
+![Тестирование производительности](https://i.ibb.co/3f4wFCT/2019-11-03-131414.png)
+Ссылка для просмотра: https://ibb.co/dbjSp5f
 
