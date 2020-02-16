@@ -32,19 +32,19 @@ class AccountsServiceTests {
         assertNotNull("Счет с указанным идентификатором не найден", accountsService.getAccountById(1L));
     }
 
-    @Test()
+    @Test
     void testGetAccountByIncorrectId() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> accountsService.getAccountById(-1L));
     }
 
-    @Test()
-    void testGetClientsAccounts() throws ClientNotFoundException {
+    @Test
+    void testGetClientsAccounts() throws ClientNotFoundException, AccountNotFoundException {
         int size = accountsService.getClientAccounts(1L).size();
         assertTrue("Количество клиентов в БД отличается от ожидаемого: " + size, size == 2);
     }
 
 
-    @Test()
+    @Test
     void testGetClientsAccountsByIncorrectId() {
         Assertions.assertThrows(ClientNotFoundException.class, () -> accountsService.getClientAccounts(-1L));
     }

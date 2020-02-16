@@ -80,12 +80,12 @@ class TransactionsServiceTests {
     }
 
     @Test
-    void testWithdrawtWithNegativeAmount() {
+    void testWithdrawWithNegativeAmount() {
         Assertions.assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(ACCOUNT_ID, NEGATIVE_AMOUNT));
     }
 
     @Test
-    void testWithdrawtWithIncorrectClientId() {
+    void testWithdrawWithIncorrectClientId() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> transactionsService.withdraw(INCORRECT_ACCOUNT_ID, CORRECT_AMOUNT));
     }
 

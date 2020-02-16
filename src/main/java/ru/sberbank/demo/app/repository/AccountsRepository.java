@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface AccountsRepository extends CrudRepository<Account, Long> {
 
-    Optional<List<Account>> getAccountsByClient_Id(Long clientId);
+    Optional<List<Account>> getAccountsByClientId(Long clientId);
 
     Optional<Account> getAccountById(Long id);
 

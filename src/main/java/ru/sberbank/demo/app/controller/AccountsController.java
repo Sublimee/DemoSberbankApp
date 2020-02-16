@@ -22,7 +22,7 @@ public class AccountsController {
     }
 
     @GetMapping("/clients/{id}")
-    public List<Account> getClientAccounts(@PathVariable("id") Long clientId) throws ClientNotFoundException {
+    public List<Account> getClientAccounts(@PathVariable("id") Long clientId) throws ClientNotFoundException, AccountNotFoundException {
         return accountsService.getClientAccounts(clientId);
     }
 
