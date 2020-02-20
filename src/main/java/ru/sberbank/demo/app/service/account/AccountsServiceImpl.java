@@ -1,6 +1,7 @@
 package ru.sberbank.demo.app.service.account;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.ClientNotFoundException;
@@ -17,12 +18,17 @@ import java.util.Optional;
 @Slf4j
 public class AccountsServiceImpl implements AccountsService {
 
-    private final AccountsRepository accountsRepository;
+    private AccountsRepository accountsRepository;
 
-    private final ClientsRepository clientsRepository;
+    private ClientsRepository clientsRepository;
 
-    public AccountsServiceImpl(AccountsRepository accountsRepository, ClientsRepository clientsRepository) {
+    @Autowired
+    public void setAccountsRepository(AccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
+    }
+
+    @Autowired
+    public void setClientsRepository(ClientsRepository clientsRepository) {
         this.clientsRepository = clientsRepository;
     }
 
@@ -34,9 +40,9 @@ public class AccountsServiceImpl implements AccountsService {
      * @throws ClientNotFoundException если клиент с заданным идентификатором не найден
      */
     @Override
-    public List<Account> getClientAccounts(Long clientId) throws ClientNotFoundException, AccountNotFoundException {
+    public List<Account> getClientAccounts(Long clientId) throws ClientNotFoundException {
         Optional<Client> client = clientsRepository.findById(clientId);
-        if (!client.isPresent()){
+        if (!client.isPresent()) {
             log.error("Клиент с идентификатором " + clientId + " не найден");
             throw new ClientNotFoundException();
         }
