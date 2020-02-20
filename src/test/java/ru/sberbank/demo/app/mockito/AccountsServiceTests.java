@@ -7,12 +7,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
+import ru.sberbank.demo.app.exception.ClientNotFoundException;
 import ru.sberbank.demo.app.model.Account;
+import ru.sberbank.demo.app.model.Client;
 import ru.sberbank.demo.app.repository.AccountsRepository;
 import ru.sberbank.demo.app.repository.ClientsRepository;
 import ru.sberbank.demo.app.service.account.AccountsService;
 import ru.sberbank.demo.app.service.account.AccountsServiceImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class Mocking {
+public class AccountsServiceTests {
 
     @Mock
     AccountsRepository accountsRepository;
@@ -44,6 +48,22 @@ public class Mocking {
     public void getAccountByIdExceptionTest() {
         when(accountsRepository.getAccountById(anyLong())).thenReturn(Optional.empty());
         assertThrows(AccountNotFoundException.class, () -> accountsService.getAccountById(anyLong()));
+    }
+
+    @Test
+    public void getClientAccountsTest() throws AccountNotFoundException, ClientNotFoundException {
+        when(clientsRepository.findById(anyLong())).thenReturn(Optional.of(new Client()));
+        List<Account> accountList = new ArrayList<>();
+        accountList.add(new Account());
+        when(accountsRepository.getAccountsByClientId(anyLong())).thenReturn(Optional.of(accountList));
+        List<Account> clientAccounts = accountsService.getClientAccounts(anyLong());
+        assertEquals(clientAccounts.size(), accountList.size());
+    }
+
+    @Test
+    public void getClientAccountsExceptionTest() {
+        when(clientsRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(ClientNotFoundException.class, () -> accountsService.getClientAccounts(anyLong()));
     }
 
 }
