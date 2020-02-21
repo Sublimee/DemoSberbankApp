@@ -1,6 +1,7 @@
 package ru.sberbank.demo.app.service.transaction;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.transaction.DepositTransactionException;
@@ -22,15 +23,28 @@ import java.util.Optional;
 @Slf4j
 public class TransactionsServiceImpl implements TransactionsService {
 
-    private final AccountsRepository accountsRepository;
-    private final DepositTransactionsRepository depositTransactionsRepository;
-    private final TransferTransactionsRepository transferTransactionsRepository;
-    private final WithdrawTransactionsRepository withdrawTransactionsRepository;
+    private AccountsRepository accountsRepository;
+    private DepositTransactionsRepository depositTransactionsRepository;
+    private TransferTransactionsRepository transferTransactionsRepository;
+    private WithdrawTransactionsRepository withdrawTransactionsRepository;
 
-    public TransactionsServiceImpl(AccountsRepository accountsRepository, DepositTransactionsRepository depositTransactionsRepository, TransferTransactionsRepository transferTransactionsRepository, WithdrawTransactionsRepository withdrawTransactionsRepository) {
+    @Autowired
+    public void setAccountsRepository(AccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
+    }
+
+    @Autowired
+    public void setDepositTransactionsRepository(DepositTransactionsRepository depositTransactionsRepository) {
         this.depositTransactionsRepository = depositTransactionsRepository;
+    }
+
+    @Autowired
+    public void setTransferTransactionsRepository(TransferTransactionsRepository transferTransactionsRepository) {
         this.transferTransactionsRepository = transferTransactionsRepository;
+    }
+
+    @Autowired
+    public void setWithdrawTransactionsRepository(WithdrawTransactionsRepository withdrawTransactionsRepository) {
         this.withdrawTransactionsRepository = withdrawTransactionsRepository;
     }
 

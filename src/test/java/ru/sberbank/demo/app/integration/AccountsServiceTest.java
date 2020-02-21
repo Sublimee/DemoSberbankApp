@@ -24,7 +24,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = {"/import_clients_accounts.sql"})
-class AccountsServiceTests {
+class AccountsServiceTest {
 
     @Autowired
     AccountsService accountsService;

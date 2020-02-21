@@ -26,7 +26,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = {"/import_clients_accounts.sql"})
-class TransactionsServiceTests {
+class TransactionsServiceTest {
 
     @Autowired
     TransactionsService transactionsService;
@@ -49,56 +49,56 @@ class TransactionsServiceTests {
     private final Long INCORRECT_PAYEE_ACCOUNT_ID = -3L;
 
     @Test
-    void testDeposit() throws AccountNotFoundException, DepositTransactionException {
+    void depositTest() throws AccountNotFoundException, DepositTransactionException {
         transactionsService.deposit(ACCOUNT_ID, POSITIVE_AMOUNT);
         Long balance = accountsService.getAccountById(ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете не совпадает с ожидаемой: " + balance, balance == ACCOUNT_AMOUNT + POSITIVE_AMOUNT);
     }
 
     @Test
-    void testDepositWithZeroAmount() {
+    void depositWithZeroAmountExceptionTest() {
         Assertions.assertThrows(DepositTransactionException.class, () -> transactionsService.deposit(ACCOUNT_ID, ZERO_AMOUNT));
     }
 
     @Test
-    void testDepositWithNegativeAmount() {
+    void depositWithNegativeAmountTest() {
         Assertions.assertThrows(DepositTransactionException.class, () -> transactionsService.deposit(ACCOUNT_ID, NEGATIVE_AMOUNT));
     }
 
     @Test
-    void testDepositWithIncorrectAccountId() {
+    void depositWithIncorrectAccountIdTest() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> transactionsService.deposit(INCORRECT_ACCOUNT_ID, POSITIVE_AMOUNT));
     }
 
     @Test
-    void testWithdraw() throws AccountNotFoundException, WithdrawTransactionException {
+    void withdrawTest() throws AccountNotFoundException, WithdrawTransactionException {
         transactionsService.withdraw(ACCOUNT_ID, POSITIVE_AMOUNT);
         Long balance = accountsService.getAccountById(ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете не совпадает с ожидаемой: " + balance, balance == ACCOUNT_AMOUNT - POSITIVE_AMOUNT);
     }
 
     @Test
-    void testWithdrawWithZeroAmount() {
+    void withdrawWithZeroAmountExceptionTest() {
         Assertions.assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(ACCOUNT_ID, ZERO_AMOUNT));
     }
 
     @Test
-    void testWithdrawWithNegativeAmount() {
+    void withdrawWithNegativeAmountExceptionTest() {
         Assertions.assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(ACCOUNT_ID, NEGATIVE_AMOUNT));
     }
 
     @Test
-    void testWithdrawWithIncorrectClientId() {
+    void withdrawWithIncorrectClientIdExceptionTest() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> transactionsService.withdraw(INCORRECT_ACCOUNT_ID, POSITIVE_AMOUNT));
     }
 
     @Test
-    void testWithdrawWithIncorrectBigAmount() {
+    void withdrawWithIncorrectBigAmountExceptionTest() {
         Assertions.assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(ACCOUNT_ID, INCORRECT_POSITIVE_AMOUNT));
     }
 
     @Test
-    void testTransfer() throws AccountNotFoundException, TransferTransactionException {
+    void transferTest() throws AccountNotFoundException, TransferTransactionException {
         transactionsService.transfer(ACCOUNT_ID, PAYEE_ACCOUNT_ID, POSITIVE_AMOUNT);
         Long accountBalance = accountsService.getAccountById(ACCOUNT_ID).getBalance();
         Long otherAccountBalance = accountsService.getAccountById(PAYEE_ACCOUNT_ID).getBalance();
@@ -107,32 +107,32 @@ class TransactionsServiceTests {
     }
 
     @Test
-    void testTransferWithZeroAmount() {
+    void transferWithZeroAmountExceptionTest() {
         Assertions.assertThrows(TransferTransactionException.class, () -> transactionsService.transfer(ACCOUNT_ID, PAYEE_ACCOUNT_ID, ZERO_AMOUNT));
     }
 
     @Test
-    void testTransferWithNegativeAmount() {
+    void transferWithNegativeAmountExceptionTest() {
         Assertions.assertThrows(TransferTransactionException.class, () -> transactionsService.transfer(ACCOUNT_ID, PAYEE_ACCOUNT_ID, NEGATIVE_AMOUNT));
     }
 
     @Test
-    void testTransferWithIncorrectPayerAccountAndCorrectAmount() {
+    void transferWithIncorrectPayerAccountAndCorrectAmountExceptionTest() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> transactionsService.transfer(INCORRECT_ACCOUNT_ID, PAYEE_ACCOUNT_ID, POSITIVE_AMOUNT));
     }
 
     @Test
-    void testTransferWithIncorrectPayeeAccountAndCorrectAmount() {
+    void transferWithIncorrectPayeeAccountAndCorrectAmountExceptionTest() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> transactionsService.transfer(ACCOUNT_ID, INCORRECT_PAYEE_ACCOUNT_ID, POSITIVE_AMOUNT));
     }
 
     @Test
-    void testTransferWithIncorrectAccountsAndCorrectAmount() {
+    void transferWithIncorrectAccountsAndCorrectAmountExceptionTest() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> transactionsService.transfer(INCORRECT_ACCOUNT_ID, INCORRECT_PAYEE_ACCOUNT_ID, POSITIVE_AMOUNT));
     }
 
     @Test
-    void testTransferWithIncorrectAccountsAndBigAmount() {
+    void transferWithIncorrectAccountsAndBigAmountExceptionTest() {
         Assertions.assertThrows(AccountNotFoundException.class, () -> transactionsService.transfer(INCORRECT_ACCOUNT_ID, INCORRECT_PAYEE_ACCOUNT_ID, INCORRECT_POSITIVE_AMOUNT));
     }
 
