@@ -1,7 +1,7 @@
 package ru.sberbank.demo.app.integration;
 
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.sberbank.demo.app.category.IntegrationTests;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.transaction.DepositTransactionException;
 import ru.sberbank.demo.app.exception.transaction.TransferTransactionException;
@@ -22,31 +21,27 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 
 @SpringBootTest
-@Category(IntegrationTests.class)
+@Tag("IntegrationTests")
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = {"/import_clients_accounts.sql"})
 class TransactionsServiceTest {
 
-    @Autowired
-    TransactionsService transactionsService;
-
-    @Autowired
-    AccountsService accountsService;
-
     private final Long ACCOUNT_AMOUNT = 2000L;
     private final Long OTHER_ACCOUNT_AMOUNT = 5000L;
-
     private final Long ZERO_AMOUNT = 0L;
     private final Long NEGATIVE_AMOUNT = -50L;
     private final Long POSITIVE_AMOUNT = 50L;
     private final Long INCORRECT_POSITIVE_AMOUNT = Long.MAX_VALUE;
-
     private final Long ACCOUNT_ID = 1L;
     private final Long PAYEE_ACCOUNT_ID = 3L;
-
     private final Long INCORRECT_ACCOUNT_ID = -1L;
     private final Long INCORRECT_PAYEE_ACCOUNT_ID = -3L;
+
+    @Autowired
+    TransactionsService transactionsService;
+    @Autowired
+    AccountsService accountsService;
 
     @Test
     void depositTest() throws AccountNotFoundException, DepositTransactionException {
