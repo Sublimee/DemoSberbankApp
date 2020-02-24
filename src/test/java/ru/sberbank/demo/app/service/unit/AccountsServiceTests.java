@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.unit;
+package ru.sberbank.demo.app.service.unit;
 
 
 import org.junit.jupiter.api.Tag;

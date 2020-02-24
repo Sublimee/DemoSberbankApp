@@ -1,5 +1,7 @@
 package ru.sberbank.demo.app.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +24,13 @@ public class AccountsController {
     }
 
     @GetMapping("/clients/{id}")
-    public List<Account> getClientAccounts(@PathVariable("id") Long clientId) throws ClientNotFoundException, AccountNotFoundException {
-        return accountsService.getClientAccounts(clientId);
+    public ResponseEntity<List<Account>> getClientAccounts(@PathVariable("id") Long clientId) throws ClientNotFoundException, AccountNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(accountsService.getClientAccounts(clientId));
     }
 
     @GetMapping("/{id}")
-    public Account getAccountById(@PathVariable("id") Long id) throws AccountNotFoundException {
-        return accountsService.getAccountById(id);
+    public ResponseEntity<Account> getAccountById(@PathVariable("id") Long id) throws AccountNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(accountsService.getAccountById(id));
     }
 
 }

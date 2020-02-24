@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.integration;
+package ru.sberbank.demo.app.service.integration;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
