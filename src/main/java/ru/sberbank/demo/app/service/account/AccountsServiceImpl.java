@@ -44,7 +44,7 @@ public class AccountsServiceImpl implements AccountsService {
         Optional<Client> client = clientsRepository.findById(clientId);
         if (!client.isPresent()) {
             log.error("Клиент с идентификатором " + clientId + " не найден");
-            throw new ClientNotFoundException();
+            throw new ClientNotFoundException("Клиент с идентификатором " + clientId + " не найден");
         }
         Optional<List<Account>> accountsByClientId = accountsRepository.getAccountsByClientId(clientId);
         return accountsByClientId.orElseGet(ArrayList::new);
@@ -62,7 +62,7 @@ public class AccountsServiceImpl implements AccountsService {
         Optional<Account> account = accountsRepository.getAccountById(accountId);
         if (!account.isPresent()) {
             log.error("Счет с идентификатором " + accountId + " не найден");
-            throw new AccountNotFoundException();
+            throw new AccountNotFoundException("Счет с идентификатором " + accountId + " не найден");
         }
         return account.get();
     }

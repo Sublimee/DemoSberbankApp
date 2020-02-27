@@ -101,7 +101,7 @@ public class TransactionsServiceImpl implements TransactionsService {
         Optional<Account> accountById = accountsRepository.getAccountById(accountId);
         if (!accountById.isPresent()) {
             log.error("Счет с идентификатором" + accountId + "не найден");
-            throw new AccountNotFoundException();
+            throw new AccountNotFoundException("Счет с идентификатором" + accountId + "не найден");
         }
         return accountById.get();
     }
