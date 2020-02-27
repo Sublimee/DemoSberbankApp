@@ -27,6 +27,12 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = {"/import_clients_accounts.sql"})
 class TransactionsServiceTest {
 
+    @Autowired
+    private TransactionsService transactionsService;
+
+    @Autowired
+    private AccountsService accountsService;
+
     private final Long ACCOUNT_AMOUNT = 2000L;
     private final Long OTHER_ACCOUNT_AMOUNT = 5000L;
     private final Long ZERO_AMOUNT = 0L;
@@ -38,10 +44,6 @@ class TransactionsServiceTest {
     private final Long INCORRECT_ACCOUNT_ID = -1L;
     private final Long INCORRECT_PAYEE_ACCOUNT_ID = -3L;
 
-    @Autowired
-    TransactionsService transactionsService;
-    @Autowired
-    AccountsService accountsService;
 
     @Test
     void depositTest() throws AccountNotFoundException, DepositTransactionException {
@@ -97,8 +99,8 @@ class TransactionsServiceTest {
         transactionsService.transfer(ACCOUNT_ID, PAYEE_ACCOUNT_ID, POSITIVE_AMOUNT);
         Long accountBalance = accountsService.getAccountById(ACCOUNT_ID).getBalance();
         Long otherAccountBalance = accountsService.getAccountById(PAYEE_ACCOUNT_ID).getBalance();
-        assertTrue("Сумма на счете отправителя не совпадает с ожидаемой: " + accountBalance, accountBalance == ACCOUNT_AMOUNT - POSITIVE_AMOUNT);
-        assertTrue("Сумма на счете получателя не совпадает с ожидаемой: " + otherAccountBalance, otherAccountBalance == OTHER_ACCOUNT_AMOUNT + POSITIVE_AMOUNT);
+        assertTrue("Сумма на счете отправителя не совпадает с ожидаемой: " + accountBalance, accountBalance.equals(ACCOUNT_AMOUNT - POSITIVE_AMOUNT));
+        assertTrue("Сумма на счете получателя не совпадает с ожидаемой: " + otherAccountBalance, otherAccountBalance.equals(OTHER_ACCOUNT_AMOUNT + POSITIVE_AMOUNT));
     }
 
     @Test
