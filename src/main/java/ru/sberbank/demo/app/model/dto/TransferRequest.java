@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.dto;
+package ru.sberbank.demo.app.model.dto;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
