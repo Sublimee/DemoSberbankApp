@@ -34,11 +34,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AccountsController.class)
 public class AccountsControllerTest {
 
+    @MockBean
+    AccountsService accountsService;
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    AccountsService accountsService;
+    private static <T> T fromJSON(final TypeReference<T> type, final MvcResult mvcResult) throws JsonProcessingException, UnsupportedEncodingException {
+        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), type);
+    }
 
     @Test
     public void getClientAccountsOkTest() throws Exception {
@@ -93,10 +96,6 @@ public class AccountsControllerTest {
         Account actualAccount = fromJSON(new TypeReference<Account>() {
         }, mvcResult);
         assertEquals(expectedAccount, actualAccount);
-    }
-
-    private static <T> T fromJSON(final TypeReference<T> type, final MvcResult mvcResult) throws JsonProcessingException, UnsupportedEncodingException {
-        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), type);
     }
 
 }

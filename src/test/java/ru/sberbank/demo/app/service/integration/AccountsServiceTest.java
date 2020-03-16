@@ -42,7 +42,7 @@ class AccountsServiceTest {
     @Test
     void testGetClientsAccounts() throws ClientNotFoundException, AccountNotFoundException {
         int size = accountsService.getClientAccounts(1L).size();
-        assertTrue("Количество клиентов в БД отличается от ожидаемого: " + size, size == 2);
+        assertTrue("Количество клиентов в БД отличается от ожидаемого: " + size, size == 3);
     }
 
     @Test

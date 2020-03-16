@@ -27,12 +27,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = {"/import_clients_accounts.sql"})
 class TransactionsServiceTest {
 
-    @Autowired
-    private TransactionsService transactionsService;
-
-    @Autowired
-    private AccountsService accountsService;
-
     private final Long ACCOUNT_AMOUNT = 2000L;
     private final Long OTHER_ACCOUNT_AMOUNT = 5000L;
     private final Long ZERO_AMOUNT = 0L;
@@ -44,6 +38,10 @@ class TransactionsServiceTest {
     private final Long INCORRECT_ACCOUNT_ID = -1L;
     private final Long INCORRECT_PAYEE_ACCOUNT_ID = -3L;
 
+    @Autowired
+    private TransactionsService transactionsService;
+    @Autowired
+    private AccountsService accountsService;
 
     @Test
     void depositTest() throws AccountNotFoundException, DepositTransactionException {

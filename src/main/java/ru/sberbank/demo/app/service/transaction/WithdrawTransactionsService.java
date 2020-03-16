@@ -6,6 +6,6 @@ import ru.sberbank.demo.app.model.transactions.WithdrawTransaction;
 
 public interface WithdrawTransactionsService {
 
-    WithdrawTransaction withdraw(Long accountId, Long transferAmount) throws AccountNotFoundException, WithdrawTransactionException;
+    WithdrawTransaction withdraw(final Long accountId, final Long transferAmount) throws AccountNotFoundException, WithdrawTransactionException;
 
 }

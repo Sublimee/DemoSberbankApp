@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface AccountsService {
 
-    List<Account> getClientAccounts(Long clientId) throws ClientNotFoundException, AccountNotFoundException;
+    List<Account> getClientAccounts(final Long clientId) throws ClientNotFoundException, AccountNotFoundException;
 
-    Account getAccountById(Long accountId) throws AccountNotFoundException;
+    Account getAccountById(final Long accountId) throws AccountNotFoundException;
 
 }

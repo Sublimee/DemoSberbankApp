@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditAspect {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuditAspect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditAspect.class);
 
     @Before("execution(* ru.sberbank.demo.app.repository.AccountsRepository.getAccountsByClientId(Long))")
-    public void before(JoinPoint joinPoint) {
-        logger.info("Searching Project with id {}", joinPoint.getArgs()[0]);
+    public void auditClientAccounts(final JoinPoint joinPoint) {
+        LOGGER.info("Searching Project with id {}", joinPoint.getArgs()[0]);
     }
 
 }

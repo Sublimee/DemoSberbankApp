@@ -6,6 +6,6 @@ import ru.sberbank.demo.app.model.transactions.DepositTransaction;
 
 public interface DepositTransactionsService {
 
-    DepositTransaction deposit(Long accountId, Long transferAmount) throws AccountNotFoundException, DepositTransactionException;
+    DepositTransaction deposit(final Long accountId, final Long transferAmount) throws AccountNotFoundException, DepositTransactionException;
 
 }

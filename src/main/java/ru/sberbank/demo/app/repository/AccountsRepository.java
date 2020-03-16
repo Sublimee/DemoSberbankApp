@@ -1,6 +1,7 @@
 package ru.sberbank.demo.app.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import ru.sberbank.demo.app.model.Account;
 
@@ -8,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AccountsRepository extends CrudRepository<Account, Long> {
+public interface AccountsRepository extends PagingAndSortingRepository<Account, Long>, JpaSpecificationExecutor<Account> {
 
-    Optional<List<Account>> getAccountsByClientId(Long clientId);
+    Optional<List<Account>> getAccountsByClientId(final Long clientId);
 
-    Optional<Account> getAccountById(Long id);
+    Optional<Account> getAccountById(final Long id);
 
 }

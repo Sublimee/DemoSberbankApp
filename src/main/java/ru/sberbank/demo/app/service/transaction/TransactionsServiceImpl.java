@@ -29,22 +29,22 @@ public class TransactionsServiceImpl implements TransactionsService {
     private WithdrawTransactionsRepository withdrawTransactionsRepository;
 
     @Autowired
-    public void setAccountsRepository(AccountsRepository accountsRepository) {
+    public void setAccountsRepository(final AccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
     }
 
     @Autowired
-    public void setDepositTransactionsRepository(DepositTransactionsRepository depositTransactionsRepository) {
+    public void setDepositTransactionsRepository(final DepositTransactionsRepository depositTransactionsRepository) {
         this.depositTransactionsRepository = depositTransactionsRepository;
     }
 
     @Autowired
-    public void setTransferTransactionsRepository(TransferTransactionsRepository transferTransactionsRepository) {
+    public void setTransferTransactionsRepository(final TransferTransactionsRepository transferTransactionsRepository) {
         this.transferTransactionsRepository = transferTransactionsRepository;
     }
 
     @Autowired
-    public void setWithdrawTransactionsRepository(WithdrawTransactionsRepository withdrawTransactionsRepository) {
+    public void setWithdrawTransactionsRepository(final WithdrawTransactionsRepository withdrawTransactionsRepository) {
         this.withdrawTransactionsRepository = withdrawTransactionsRepository;
     }
 
@@ -59,7 +59,7 @@ public class TransactionsServiceImpl implements TransactionsService {
      */
     @Override
     @Transactional
-    public DepositTransaction deposit(Long accountId, Long depositAmount) throws AccountNotFoundException, DepositTransactionException {
+    public DepositTransaction deposit(final Long accountId, final Long depositAmount) throws AccountNotFoundException, DepositTransactionException {
         checkDepositTransactionParams(depositAmount);
         return getDepositTransaction(depositAmount, getDepositAccount(accountId, depositAmount));
     }
@@ -75,7 +75,7 @@ public class TransactionsServiceImpl implements TransactionsService {
      */
     @Override
     @Transactional
-    public WithdrawTransaction withdraw(Long accountId, Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
+    public WithdrawTransaction withdraw(final Long accountId, final Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
         checkWithdrawTransactionParams(withdrawAmount);
         return getWithdrawTransaction(withdrawAmount, getWithdrawAccount(accountId, withdrawAmount));
     }
@@ -92,12 +92,12 @@ public class TransactionsServiceImpl implements TransactionsService {
      */
     @Override
     @Transactional
-    public TransferTransaction transfer(Long fromAccountId, Long toAccountId, Long transferAmount) throws TransferTransactionException, AccountNotFoundException {
+    public TransferTransaction transfer(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws TransferTransactionException, AccountNotFoundException {
         checkTransferTransactionParams(fromAccountId, toAccountId, transferAmount);
         return getTransferTransaction(fromAccountId, toAccountId, transferAmount);
     }
 
-    private Account getAccount(Long accountId) throws AccountNotFoundException {
+    private Account getAccount(final Long accountId) throws AccountNotFoundException {
         Optional<Account> accountById = accountsRepository.getAccountById(accountId);
         if (!accountById.isPresent()) {
             log.error("Счет с идентификатором" + accountId + "не найден");
@@ -106,7 +106,7 @@ public class TransactionsServiceImpl implements TransactionsService {
         return accountById.get();
     }
 
-    private Account getWithdrawAccount(Long accountId, Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
+    private Account getWithdrawAccount(final Long accountId, final Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
         Account account = getAccount(accountId);
         if (account.getBalance() < withdrawAmount) {
             log.error("Имеющейся на счете " + accountId + " суммы недостаточно для завершения операции.");
@@ -116,27 +116,27 @@ public class TransactionsServiceImpl implements TransactionsService {
         return account;
     }
 
-    private Account getDepositAccount(Long accountId, Long transferAmount) throws AccountNotFoundException {
+    private Account getDepositAccount(final Long accountId, final Long transferAmount) throws AccountNotFoundException {
         Account account = getAccount(accountId);
         account.setBalance(account.getBalance() + transferAmount);
         return account;
     }
 
-    private DepositTransaction getDepositTransaction(Long transferAmount, Account account) {
+    private DepositTransaction getDepositTransaction(final Long transferAmount, final Account account) {
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setAccount(account);
         depositTransaction.setTransferAmount(transferAmount);
         return depositTransactionsRepository.save(depositTransaction);
     }
 
-    private WithdrawTransaction getWithdrawTransaction(Long withdrawAmount, Account account) {
+    private WithdrawTransaction getWithdrawTransaction(final Long withdrawAmount, final Account account) {
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setAccount(account);
         withdrawTransaction.setTransferAmount(withdrawAmount);
         return withdrawTransactionsRepository.save(withdrawTransaction);
     }
 
-    private TransferTransaction getTransferTransaction(Long fromAccountId, Long toAccountId, Long transferAmount) throws AccountNotFoundException, TransferTransactionException {
+    private TransferTransaction getTransferTransaction(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws AccountNotFoundException, TransferTransactionException {
         TransferTransaction transferTransaction = new TransferTransaction();
         try {
             transferTransaction.setAccount(getWithdrawAccount(fromAccountId, transferAmount));
@@ -149,7 +149,7 @@ public class TransactionsServiceImpl implements TransactionsService {
         return transferTransactionsRepository.save(transferTransaction);
     }
 
-    private void checkTransferTransactionParams(Long fromAccountId, Long toAccountId, Long transferAmount) throws TransferTransactionException {
+    private void checkTransferTransactionParams(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws TransferTransactionException {
         if (fromAccountId.equals(toAccountId)) {
             log.error("Переводы не осуществляются внутри одного счета: " + fromAccountId);
             throw new TransferTransactionException("Переводы не осуществляются внутри одного счета");
@@ -164,7 +164,7 @@ public class TransactionsServiceImpl implements TransactionsService {
         }
     }
 
-    private void checkWithdrawTransactionParams(Long withdrawAmount) throws WithdrawTransactionException {
+    private void checkWithdrawTransactionParams(final Long withdrawAmount) throws WithdrawTransactionException {
         if (withdrawAmount < 0) {
             log.error("Сумма снятия не может быть задана отрицательным числом: " + withdrawAmount);
             throw new WithdrawTransactionException("Сумма снятия не может быть задана отрицательным числом: " + withdrawAmount);
@@ -175,7 +175,7 @@ public class TransactionsServiceImpl implements TransactionsService {
         }
     }
 
-    private void checkDepositTransactionParams(Long depositAmount) throws DepositTransactionException {
+    private void checkDepositTransactionParams(final Long depositAmount) throws DepositTransactionException {
         if (depositAmount < 0) {
             log.error("Сумма пополнения не может быть задана отрицательным числом: " + depositAmount);
             throw new DepositTransactionException("Сумма пополнения не может быть задана отрицательным числом: " + depositAmount);

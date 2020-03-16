@@ -1,5 +1,6 @@
 package ru.sberbank.demo.app.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,22 +28,22 @@ public class TransactionsController {
 
     private final TransactionsService transactionsService;
 
-    public TransactionsController(TransactionsService transactionsService) {
+    @Autowired
+    public TransactionsController(final TransactionsService transactionsService) {
         this.transactionsService = transactionsService;
     }
 
     @PostMapping(value = "/deposit", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<DepositTransaction> deposit(@Valid @RequestBody DepositRequest depositRequest) throws AccountNotFoundException, DepositTransactionException {
-        DepositTransaction deposit = transactionsService.deposit(depositRequest.getAccountId(), depositRequest.getAmount());
+    public ResponseEntity<DepositTransaction> deposit(@Valid @RequestBody final DepositRequest depositRequest) throws AccountNotFoundException, DepositTransactionException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(deposit);
+                .body(transactionsService.deposit(depositRequest.getAccountId(), depositRequest.getAmount()));
     }
 
     @PostMapping(value = "/transfer", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<TransferTransaction> transfer(@Valid @RequestBody TransferRequest transferRequest) throws AccountNotFoundException, TransferTransactionException, WithdrawTransactionException {
+    public ResponseEntity<TransferTransaction> transfer(@Valid @RequestBody final TransferRequest transferRequest) throws AccountNotFoundException, TransferTransactionException, WithdrawTransactionException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(transactionsService.transfer(transferRequest.getFromAccountId(), transferRequest.getToAccountId(), transferRequest.getAmount()));
@@ -50,7 +51,7 @@ public class TransactionsController {
 
     @PostMapping(value = "/withdraw", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<WithdrawTransaction> depositAccount(@Valid @RequestBody WithdrawRequest withdrawRequest) throws AccountNotFoundException, WithdrawTransactionException {
+    public ResponseEntity<WithdrawTransaction> depositAccount(@Valid @RequestBody final WithdrawRequest withdrawRequest) throws AccountNotFoundException, WithdrawTransactionException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(transactionsService.withdraw(withdrawRequest.getAccountId(), withdrawRequest.getAmount()));

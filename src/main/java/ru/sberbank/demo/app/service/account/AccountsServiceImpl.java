@@ -23,12 +23,12 @@ public class AccountsServiceImpl implements AccountsService {
     private ClientsRepository clientsRepository;
 
     @Autowired
-    public void setAccountsRepository(AccountsRepository accountsRepository) {
+    public void setAccountsRepository(final AccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
     }
 
     @Autowired
-    public void setClientsRepository(ClientsRepository clientsRepository) {
+    public void setClientsRepository(final ClientsRepository clientsRepository) {
         this.clientsRepository = clientsRepository;
     }
 
@@ -40,7 +40,7 @@ public class AccountsServiceImpl implements AccountsService {
      * @throws ClientNotFoundException если клиент с заданным идентификатором не найден
      */
     @Override
-    public List<Account> getClientAccounts(Long clientId) throws ClientNotFoundException {
+    public List<Account> getClientAccounts(final Long clientId) throws ClientNotFoundException {
         Optional<Client> client = clientsRepository.findById(clientId);
         if (!client.isPresent()) {
             log.error("Клиент с идентификатором " + clientId + " не найден");
@@ -58,7 +58,7 @@ public class AccountsServiceImpl implements AccountsService {
      * @throws AccountNotFoundException если счет с заданным идентификатором не найден
      */
     @Override
-    public Account getAccountById(Long accountId) throws AccountNotFoundException {
+    public Account getAccountById(final Long accountId) throws AccountNotFoundException {
         Optional<Account> account = accountsRepository.getAccountById(accountId);
         if (!account.isPresent()) {
             log.error("Счет с идентификатором " + accountId + " не найден");
