@@ -2,13 +2,18 @@ package ru.sberbank.demo.app.service.account;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.ClientNotFoundException;
 import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.model.Client;
 import ru.sberbank.demo.app.repository.AccountsRepository;
 import ru.sberbank.demo.app.repository.ClientsRepository;
+import ru.sberbank.demo.app.service.AbstractService;
+import ru.sberbank.demo.app.service.IRawService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +21,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class AccountsServiceImpl implements AccountsService {
+public class AccountsServiceImpl extends AbstractService<Account> implements AccountsService{
 
     private AccountsRepository accountsRepository;
 
@@ -40,6 +45,7 @@ public class AccountsServiceImpl implements AccountsService {
      * @throws ClientNotFoundException если клиент с заданным идентификатором не найден
      */
     @Override
+    @Transactional(readOnly = true)
     public List<Account> getClientAccounts(final Long clientId) throws ClientNotFoundException {
         Optional<Client> client = clientsRepository.findById(clientId);
         if (!client.isPresent()) {
@@ -50,6 +56,12 @@ public class AccountsServiceImpl implements AccountsService {
         return accountsByClientId.orElseGet(ArrayList::new);
     }
 
+//    @Override
+//    @Transactional(readOnly = true)
+//    public Optional<T> findOne(final long id) {
+//        return getDao().findById(id);
+//    }
+
     /**
      * Получение информации по конкретному счету
      *
@@ -58,6 +70,7 @@ public class AccountsServiceImpl implements AccountsService {
      * @throws AccountNotFoundException если счет с заданным идентификатором не найден
      */
     @Override
+    @Transactional(readOnly = true)
     public Account getAccountById(final Long accountId) throws AccountNotFoundException {
         Optional<Account> account = accountsRepository.getAccountById(accountId);
         if (!account.isPresent()) {
@@ -67,4 +80,13 @@ public class AccountsServiceImpl implements AccountsService {
         return account.get();
     }
 
+    @Override
+    protected PagingAndSortingRepository<Account, Long> getDao() {
+        return accountsRepository;
+    }
+
+    @Override
+    protected JpaSpecificationExecutor<Account> getSpecificationExecutor() {
+        return null;
+    }
 }
