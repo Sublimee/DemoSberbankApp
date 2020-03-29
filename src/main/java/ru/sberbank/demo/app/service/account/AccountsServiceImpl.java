@@ -12,8 +12,7 @@ import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.model.Client;
 import ru.sberbank.demo.app.repository.AccountsRepository;
 import ru.sberbank.demo.app.repository.ClientsRepository;
-import ru.sberbank.demo.app.service.AbstractService;
-import ru.sberbank.demo.app.service.IRawService;
+import ru.sberbank.demo.app.service.AbstractRawService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class AccountsServiceImpl extends AbstractService<Account> implements AccountsService{
+public class AccountsServiceImpl extends AbstractRawService<Account> implements AccountsService{
 
     private AccountsRepository accountsRepository;
 

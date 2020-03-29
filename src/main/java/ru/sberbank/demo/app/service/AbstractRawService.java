@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public abstract class AbstractRawService<T extends Serializable> implements IRawService<T> {
+public abstract class AbstractRawService<T extends IEntity> implements IRawService<T> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 //    @Autowired
