@@ -2,7 +2,6 @@ package ru.sberbank.demo.app.service;
 
 
 import org.apache.commons.collections4.IterableUtils;
-import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,9 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
