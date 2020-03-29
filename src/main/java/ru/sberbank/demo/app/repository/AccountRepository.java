@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AccountsRepository extends PagingAndSortingRepository<Account, Long>, JpaSpecificationExecutor<Account> {
+public interface AccountRepository extends PagingAndSortingRepository<Account, Long>, JpaSpecificationExecutor<Account> {
 
     Optional<List<Account>> getAccountsByClientId(final Long clientId);
 

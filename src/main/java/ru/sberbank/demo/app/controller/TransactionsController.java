@@ -16,10 +16,10 @@ import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.transaction.DepositTransactionException;
 import ru.sberbank.demo.app.exception.transaction.TransferTransactionException;
 import ru.sberbank.demo.app.exception.transaction.WithdrawTransactionException;
-import ru.sberbank.demo.app.model.transactions.DepositTransaction;
-import ru.sberbank.demo.app.model.transactions.TransferTransaction;
-import ru.sberbank.demo.app.model.transactions.WithdrawTransaction;
-import ru.sberbank.demo.app.service.transaction.TransactionsService;
+import ru.sberbank.demo.app.model.transaction.DepositTransaction;
+import ru.sberbank.demo.app.model.transaction.TransferTransaction;
+import ru.sberbank.demo.app.model.transaction.WithdrawTransaction;
+import ru.sberbank.demo.app.service.transaction.TransactionService;
 
 import javax.validation.Valid;
 
@@ -28,10 +28,10 @@ import javax.validation.Valid;
 @Validated
 public class TransactionsController {
 
-    private final TransactionsService transactionsService;
+    private final TransactionService transactionsService;
 
     @Autowired
-    public TransactionsController(final TransactionsService transactionsService) {
+    public TransactionsController(final TransactionService transactionsService) {
         this.transactionsService = transactionsService;
     }
 

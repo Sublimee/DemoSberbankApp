@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.controllers;
+package ru.sberbank.demo.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -13,12 +13,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.sberbank.demo.app.controller.AccountsController;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.ClientNotFoundException;
 import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.model.Client;
-import ru.sberbank.demo.app.service.account.AccountsService;
+import ru.sberbank.demo.app.service.account.AccountService;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -32,10 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AccountsController.class)
-public class AccountsControllerTest {
+public class AccountControllerTest {
 
     @MockBean
-    AccountsService accountsService;
+    AccountService accountService;
     @Autowired
     private MockMvc mockMvc;
 
@@ -56,7 +55,7 @@ public class AccountsControllerTest {
         expectedAccountList.add(firstAccount);
         expectedAccountList.add(secondAccount);
 
-        when(accountsService.getClientAccounts(anyLong())).thenReturn(expectedAccountList);
+        when(accountService.getClientAccounts(anyLong())).thenReturn(expectedAccountList);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/accounts/clients/{id}", 1L))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -68,14 +67,14 @@ public class AccountsControllerTest {
 
     @Test
     public void getClientAccountsNotFoundTest() throws Exception {
-        when(accountsService.getClientAccounts(anyLong())).thenThrow(ClientNotFoundException.class);
+        when(accountService.getClientAccounts(anyLong())).thenThrow(ClientNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/accounts/clients/{id}", 1L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void getAccountByIdNotFoundTest() throws Exception {
-        when(accountsService.getAccountById(anyLong())).thenThrow(AccountNotFoundException.class);
+        when(accountService.getAccountById(anyLong())).thenThrow(AccountNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/accounts/{id}", -1L))
                 .andExpect(status().isNotFound());
     }
@@ -88,7 +87,7 @@ public class AccountsControllerTest {
 
         Account expectedAccount = new Account(1L, client, 50L);
 
-        when(accountsService.getAccountById(anyLong())).thenReturn(expectedAccount);
+        when(accountService.getAccountById(anyLong())).thenReturn(expectedAccount);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/accounts/{id}", 1L))
                 .andExpect(status().isOk())
                 .andReturn();

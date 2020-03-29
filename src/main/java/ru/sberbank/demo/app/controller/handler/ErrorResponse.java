@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.controller.handlers;
+package ru.sberbank.demo.app.controller.handler;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

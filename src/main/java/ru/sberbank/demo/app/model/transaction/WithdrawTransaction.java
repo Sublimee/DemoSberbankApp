@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.model.transactions;
+package ru.sberbank.demo.app.model.transaction;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,8 +9,8 @@ import javax.persistence.Table;
 
 @Entity
 @Data
-@Table(name = "deposits")
+@Table(name = "withdraws")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class DepositTransaction extends AbstractTransaction {
+public class WithdrawTransaction extends AbstractTransaction {
 }

@@ -6,7 +6,7 @@ import ru.sberbank.demo.app.model.Account;
 
 import java.util.List;
 
-public interface AccountsService {
+public interface AccountService {
 
     List<Account> getClientAccounts(final Long clientId) throws ClientNotFoundException, AccountNotFoundException;
 

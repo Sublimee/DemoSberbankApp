@@ -11,10 +11,10 @@ import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.ClientNotFoundException;
 import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.model.Client;
-import ru.sberbank.demo.app.repository.AccountsRepository;
-import ru.sberbank.demo.app.repository.ClientsRepository;
-import ru.sberbank.demo.app.service.account.AccountsService;
-import ru.sberbank.demo.app.service.account.AccountsServiceImpl;
+import ru.sberbank.demo.app.repository.AccountRepository;
+import ru.sberbank.demo.app.repository.ClientRepository;
+import ru.sberbank.demo.app.service.account.AccountService;
+import ru.sberbank.demo.app.service.account.AccountServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,44 +27,44 @@ import static org.mockito.Mockito.when;
 
 @Tag("UnitTests")
 @ExtendWith(MockitoExtension.class)
-public class AccountsServiceTests {
+public class AccountServiceTests {
 
     @Mock
-    AccountsRepository accountsRepository;
+    AccountRepository accountRepository;
 
     @Mock
-    ClientsRepository clientsRepository;
+    ClientRepository clientRepository;
 
     @InjectMocks
-    AccountsService accountsService = new AccountsServiceImpl();
+    AccountService accountService = new AccountServiceImpl();
 
     @Test
     public void getAccountByIdTest() throws Exception {
-        when(accountsRepository.getAccountById(anyLong())).thenReturn(Optional.of(new Account()));
-        Account account = accountsService.getAccountById(anyLong());
+        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.of(new Account()));
+        Account account = accountService.getAccountById(anyLong());
         assertEquals(new Account(), account);
     }
 
     @Test
     public void getAccountByIdExceptionTest() {
-        when(accountsRepository.getAccountById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(AccountNotFoundException.class, () -> accountsService.getAccountById(anyLong()));
+        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(AccountNotFoundException.class, () -> accountService.getAccountById(anyLong()));
     }
 
     @Test
     public void getClientAccountsTest() throws AccountNotFoundException, ClientNotFoundException {
-        when(clientsRepository.findById(anyLong())).thenReturn(Optional.of(new Client()));
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(new Client()));
         List<Account> accountList = new ArrayList<>();
         accountList.add(new Account());
-        when(accountsRepository.getAccountsByClientId(anyLong())).thenReturn(Optional.of(accountList));
-        List<Account> clientAccounts = accountsService.getClientAccounts(anyLong());
+        when(accountRepository.getAccountsByClientId(anyLong())).thenReturn(Optional.of(accountList));
+        List<Account> clientAccounts = accountService.getClientAccounts(anyLong());
         assertEquals(clientAccounts.size(), accountList.size());
     }
 
     @Test
     public void getClientAccountsExceptionTest() {
-        when(clientsRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(ClientNotFoundException.class, () -> accountsService.getClientAccounts(anyLong()));
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(ClientNotFoundException.class, () -> accountService.getClientAccounts(anyLong()));
     }
 
 }

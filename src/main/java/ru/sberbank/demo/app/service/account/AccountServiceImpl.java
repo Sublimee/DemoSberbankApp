@@ -10,8 +10,8 @@ import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.ClientNotFoundException;
 import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.model.Client;
-import ru.sberbank.demo.app.repository.AccountsRepository;
-import ru.sberbank.demo.app.repository.ClientsRepository;
+import ru.sberbank.demo.app.repository.AccountRepository;
+import ru.sberbank.demo.app.repository.ClientRepository;
 import ru.sberbank.demo.app.service.AbstractRawService;
 
 import java.util.ArrayList;
@@ -20,20 +20,20 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class AccountsServiceImpl extends AbstractRawService<Account> implements AccountsService{
+public class AccountServiceImpl extends AbstractRawService<Account> implements AccountService {
 
-    private AccountsRepository accountsRepository;
+    private AccountRepository accountRepository;
 
-    private ClientsRepository clientsRepository;
+    private ClientRepository clientRepository;
 
     @Autowired
-    public void setAccountsRepository(final AccountsRepository accountsRepository) {
-        this.accountsRepository = accountsRepository;
+    public void setAccountRepository(final AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Autowired
-    public void setClientsRepository(final ClientsRepository clientsRepository) {
-        this.clientsRepository = clientsRepository;
+    public void setClientRepository(final ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
     }
 
     /**
@@ -46,12 +46,12 @@ public class AccountsServiceImpl extends AbstractRawService<Account> implements 
     @Override
     @Transactional(readOnly = true)
     public List<Account> getClientAccounts(final Long clientId) throws ClientNotFoundException {
-        Optional<Client> client = clientsRepository.findById(clientId);
+        Optional<Client> client = clientRepository.findById(clientId);
         if (!client.isPresent()) {
             log.error("Клиент с идентификатором " + clientId + " не найден");
             throw new ClientNotFoundException("Клиент с идентификатором " + clientId + " не найден");
         }
-        Optional<List<Account>> accountsByClientId = accountsRepository.getAccountsByClientId(clientId);
+        Optional<List<Account>> accountsByClientId = accountRepository.getAccountsByClientId(clientId);
         return accountsByClientId.orElseGet(ArrayList::new);
     }
 
@@ -71,7 +71,7 @@ public class AccountsServiceImpl extends AbstractRawService<Account> implements 
     @Override
     @Transactional(readOnly = true)
     public Account getAccountById(final Long accountId) throws AccountNotFoundException {
-        Optional<Account> account = accountsRepository.getAccountById(accountId);
+        Optional<Account> account = accountRepository.getAccountById(accountId);
         if (!account.isPresent()) {
             log.error("Счет с идентификатором " + accountId + " не найден");
             throw new AccountNotFoundException("Счет с идентификатором " + accountId + " не найден");
@@ -81,7 +81,7 @@ public class AccountsServiceImpl extends AbstractRawService<Account> implements 
 
     @Override
     protected PagingAndSortingRepository<Account, Long> getDao() {
-        return accountsRepository;
+        return accountRepository;
     }
 
     @Override

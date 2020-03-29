@@ -8,44 +8,44 @@ import ru.sberbank.demo.app.exception.transaction.DepositTransactionException;
 import ru.sberbank.demo.app.exception.transaction.TransferTransactionException;
 import ru.sberbank.demo.app.exception.transaction.WithdrawTransactionException;
 import ru.sberbank.demo.app.model.Account;
-import ru.sberbank.demo.app.model.transactions.DepositTransaction;
-import ru.sberbank.demo.app.model.transactions.TransferTransaction;
-import ru.sberbank.demo.app.model.transactions.WithdrawTransaction;
-import ru.sberbank.demo.app.repository.AccountsRepository;
-import ru.sberbank.demo.app.repository.DepositTransactionsRepository;
-import ru.sberbank.demo.app.repository.TransferTransactionsRepository;
-import ru.sberbank.demo.app.repository.WithdrawTransactionsRepository;
+import ru.sberbank.demo.app.model.transaction.DepositTransaction;
+import ru.sberbank.demo.app.model.transaction.TransferTransaction;
+import ru.sberbank.demo.app.model.transaction.WithdrawTransaction;
+import ru.sberbank.demo.app.repository.AccountRepository;
+import ru.sberbank.demo.app.repository.DepositTransactionRepository;
+import ru.sberbank.demo.app.repository.TransferTransactionRepository;
+import ru.sberbank.demo.app.repository.WithdrawTransactionRepository;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
 @Slf4j
-public class TransactionsServiceImpl implements TransactionsService {
+public class TransactionServiceImpl implements TransactionService {
 
-    private AccountsRepository accountsRepository;
-    private DepositTransactionsRepository depositTransactionsRepository;
-    private TransferTransactionsRepository transferTransactionsRepository;
-    private WithdrawTransactionsRepository withdrawTransactionsRepository;
+    private AccountRepository accountRepository;
+    private DepositTransactionRepository depositTransactionRepository;
+    private TransferTransactionRepository transferTransactionRepository;
+    private WithdrawTransactionRepository withdrawTransactionRepository;
 
     @Autowired
-    public void setAccountsRepository(final AccountsRepository accountsRepository) {
-        this.accountsRepository = accountsRepository;
+    public void setAccountRepository(final AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Autowired
-    public void setDepositTransactionsRepository(final DepositTransactionsRepository depositTransactionsRepository) {
-        this.depositTransactionsRepository = depositTransactionsRepository;
+    public void setDepositTransactionRepository(final DepositTransactionRepository depositTransactionRepository) {
+        this.depositTransactionRepository = depositTransactionRepository;
     }
 
     @Autowired
-    public void setTransferTransactionsRepository(final TransferTransactionsRepository transferTransactionsRepository) {
-        this.transferTransactionsRepository = transferTransactionsRepository;
+    public void setTransferTransactionRepository(final TransferTransactionRepository transferTransactionRepository) {
+        this.transferTransactionRepository = transferTransactionRepository;
     }
 
     @Autowired
-    public void setWithdrawTransactionsRepository(final WithdrawTransactionsRepository withdrawTransactionsRepository) {
-        this.withdrawTransactionsRepository = withdrawTransactionsRepository;
+    public void setWithdrawTransactionRepository(final WithdrawTransactionRepository withdrawTransactionRepository) {
+        this.withdrawTransactionRepository = withdrawTransactionRepository;
     }
 
     /**
@@ -98,7 +98,7 @@ public class TransactionsServiceImpl implements TransactionsService {
     }
 
     private Account getAccount(final Long accountId) throws AccountNotFoundException {
-        Optional<Account> accountById = accountsRepository.getAccountById(accountId);
+        Optional<Account> accountById = accountRepository.getAccountById(accountId);
         if (!accountById.isPresent()) {
             log.error("Счет с идентификатором" + accountId + "не найден");
             throw new AccountNotFoundException("Счет с идентификатором" + accountId + "не найден");
@@ -126,14 +126,14 @@ public class TransactionsServiceImpl implements TransactionsService {
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setAccount(account);
         depositTransaction.setTransferAmount(transferAmount);
-        return depositTransactionsRepository.save(depositTransaction);
+        return depositTransactionRepository.save(depositTransaction);
     }
 
     private WithdrawTransaction getWithdrawTransaction(final Long withdrawAmount, final Account account) {
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setAccount(account);
         withdrawTransaction.setTransferAmount(withdrawAmount);
-        return withdrawTransactionsRepository.save(withdrawTransaction);
+        return withdrawTransactionRepository.save(withdrawTransaction);
     }
 
     private TransferTransaction getTransferTransaction(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws AccountNotFoundException, TransferTransactionException {
@@ -146,7 +146,7 @@ public class TransactionsServiceImpl implements TransactionsService {
         }
         transferTransaction.setPayee(getDepositAccount(toAccountId, transferAmount));
         transferTransaction.setTransferAmount(transferAmount);
-        return transferTransactionsRepository.save(transferTransaction);
+        return transferTransactionRepository.save(transferTransaction);
     }
 
     private void checkTransferTransactionParams(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws TransferTransactionException {

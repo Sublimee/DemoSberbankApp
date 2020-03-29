@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.model.transactions;
+package ru.sberbank.demo.app.model.transaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

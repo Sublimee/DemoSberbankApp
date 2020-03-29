@@ -13,8 +13,8 @@ import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.transaction.DepositTransactionException;
 import ru.sberbank.demo.app.exception.transaction.TransferTransactionException;
 import ru.sberbank.demo.app.exception.transaction.WithdrawTransactionException;
-import ru.sberbank.demo.app.service.account.AccountsService;
-import ru.sberbank.demo.app.service.transaction.TransactionsService;
+import ru.sberbank.demo.app.service.account.AccountService;
+import ru.sberbank.demo.app.service.transaction.TransactionService;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
@@ -25,7 +25,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = {"/import_clients_accounts.sql"})
-class TransactionsServiceTest {
+class TransactionServiceTest {
 
     private final Long ACCOUNT_AMOUNT = 2000L;
     private final Long OTHER_ACCOUNT_AMOUNT = 5000L;
@@ -39,14 +39,14 @@ class TransactionsServiceTest {
     private final Long INCORRECT_PAYEE_ACCOUNT_ID = -3L;
 
     @Autowired
-    private TransactionsService transactionsService;
+    private TransactionService transactionsService;
     @Autowired
-    private AccountsService accountsService;
+    private AccountService accountService;
 
     @Test
     void depositTest() throws AccountNotFoundException, DepositTransactionException {
         transactionsService.deposit(ACCOUNT_ID, POSITIVE_AMOUNT);
-        Long balance = accountsService.getAccountById(ACCOUNT_ID).getBalance();
+        Long balance = accountService.getAccountById(ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете не совпадает с ожидаемой: " + balance, balance == ACCOUNT_AMOUNT + POSITIVE_AMOUNT);
     }
 
@@ -68,7 +68,7 @@ class TransactionsServiceTest {
     @Test
     void withdrawTest() throws AccountNotFoundException, WithdrawTransactionException {
         transactionsService.withdraw(ACCOUNT_ID, POSITIVE_AMOUNT);
-        Long balance = accountsService.getAccountById(ACCOUNT_ID).getBalance();
+        Long balance = accountService.getAccountById(ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете не совпадает с ожидаемой: " + balance, balance == ACCOUNT_AMOUNT - POSITIVE_AMOUNT);
     }
 
@@ -95,8 +95,8 @@ class TransactionsServiceTest {
     @Test
     void transferTest() throws AccountNotFoundException, TransferTransactionException {
         transactionsService.transfer(ACCOUNT_ID, PAYEE_ACCOUNT_ID, POSITIVE_AMOUNT);
-        Long accountBalance = accountsService.getAccountById(ACCOUNT_ID).getBalance();
-        Long otherAccountBalance = accountsService.getAccountById(PAYEE_ACCOUNT_ID).getBalance();
+        Long accountBalance = accountService.getAccountById(ACCOUNT_ID).getBalance();
+        Long otherAccountBalance = accountService.getAccountById(PAYEE_ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете отправителя не совпадает с ожидаемой: " + accountBalance, accountBalance.equals(ACCOUNT_AMOUNT - POSITIVE_AMOUNT));
         assertTrue("Сумма на счете получателя не совпадает с ожидаемой: " + otherAccountBalance, otherAccountBalance.equals(OTHER_ACCOUNT_AMOUNT + POSITIVE_AMOUNT));
     }

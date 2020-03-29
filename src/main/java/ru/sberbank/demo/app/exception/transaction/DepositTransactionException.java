@@ -2,7 +2,7 @@ package ru.sberbank.demo.app.exception.transaction;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.sberbank.demo.app.controller.handlers.ErrorCode;
+import ru.sberbank.demo.app.controller.handler.ErrorCode;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = DepositTransactionException.ERROR_CODE)
 public class DepositTransactionException extends RuntimeException implements ErrorCode {

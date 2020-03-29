@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
 import ru.sberbank.demo.app.exception.ClientNotFoundException;
-import ru.sberbank.demo.app.service.account.AccountsService;
+import ru.sberbank.demo.app.service.account.AccountService;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
@@ -23,31 +23,31 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = {"/import_clients_accounts.sql"})
-class AccountsServiceTest {
+class AccountServiceTest {
 
     @Autowired
-    AccountsService accountsService;
+    AccountService accountService;
 
 
     @Test
     void testGetAccountById() throws AccountNotFoundException {
-        assertNotNull("Счет с указанным идентификатором не найден", accountsService.getAccountById(1L));
+        assertNotNull("Счет с указанным идентификатором не найден", accountService.getAccountById(1L));
     }
 
     @Test
     void testGetAccountByIncorrectId() {
-        Assertions.assertThrows(AccountNotFoundException.class, () -> accountsService.getAccountById(-1L));
+        Assertions.assertThrows(AccountNotFoundException.class, () -> accountService.getAccountById(-1L));
     }
 
     @Test
     void testGetClientsAccounts() throws ClientNotFoundException, AccountNotFoundException {
-        int size = accountsService.getClientAccounts(1L).size();
+        int size = accountService.getClientAccounts(1L).size();
         assertTrue("Количество клиентов в БД отличается от ожидаемого: " + size, size == 3);
     }
 
     @Test
     void testGetClientsAccountsByIncorrectId() {
-        Assertions.assertThrows(ClientNotFoundException.class, () -> accountsService.getClientAccounts(-1L));
+        Assertions.assertThrows(ClientNotFoundException.class, () -> accountService.getClientAccounts(-1L));
     }
 
 }

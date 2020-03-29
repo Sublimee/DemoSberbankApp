@@ -1,4 +1,4 @@
-package ru.sberbank.demo.app.controller.handlers;
+package ru.sberbank.demo.app.controller.handler;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
