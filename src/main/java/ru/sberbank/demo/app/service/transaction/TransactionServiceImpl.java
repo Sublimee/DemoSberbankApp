@@ -98,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Account getAccount(final Long accountId) throws AccountNotFoundException {
-        Optional<Account> accountById = accountRepository.getAccountById(accountId);
+        Optional<Account> accountById = accountRepository.findById(accountId);
         if (!accountById.isPresent()) {
             log.error("Счет с идентификатором" + accountId + "не найден");
             throw new AccountNotFoundException("Счет с идентификатором" + accountId + "не найден");

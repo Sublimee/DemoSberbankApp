@@ -32,7 +32,7 @@ public class AccountsController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Account> getAccountById(@PathVariable("id") final Long id) throws AccountNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(accountService.findOne(id));
     }
 
 }

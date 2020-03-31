@@ -31,12 +31,12 @@ class AccountServiceTest {
 
     @Test
     void testGetAccountById() throws AccountNotFoundException {
-        assertNotNull("Счет с указанным идентификатором не найден", accountService.getAccountById(1L));
+        assertNotNull("Счет с указанным идентификатором не найден", accountService.findOne(1L));
     }
 
     @Test
     void testGetAccountByIncorrectId() {
-        Assertions.assertThrows(AccountNotFoundException.class, () -> accountService.getAccountById(-1L));
+        Assertions.assertThrows(AccountNotFoundException.class, () -> accountService.findOne(-1L));
     }
 
     @Test

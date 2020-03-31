@@ -2,13 +2,12 @@ package ru.sberbank.demo.app.service;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 public interface IOperations<T extends Serializable> {
 
     // find - one
 
-    Optional<T> findOne(final long id);
+    T findOne(final long id);
 
     /**
      * - contract: if nothing is found, an empty list will be returned to the calling client <br>

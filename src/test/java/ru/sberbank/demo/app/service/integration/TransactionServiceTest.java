@@ -46,7 +46,7 @@ class TransactionServiceTest {
     @Test
     void depositTest() throws AccountNotFoundException, DepositTransactionException {
         transactionsService.deposit(ACCOUNT_ID, POSITIVE_AMOUNT);
-        Long balance = accountService.getAccountById(ACCOUNT_ID).getBalance();
+        Long balance = accountService.findOne(ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете не совпадает с ожидаемой: " + balance, balance == ACCOUNT_AMOUNT + POSITIVE_AMOUNT);
     }
 
@@ -68,7 +68,7 @@ class TransactionServiceTest {
     @Test
     void withdrawTest() throws AccountNotFoundException, WithdrawTransactionException {
         transactionsService.withdraw(ACCOUNT_ID, POSITIVE_AMOUNT);
-        Long balance = accountService.getAccountById(ACCOUNT_ID).getBalance();
+        Long balance = accountService.findOne(ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете не совпадает с ожидаемой: " + balance, balance == ACCOUNT_AMOUNT - POSITIVE_AMOUNT);
     }
 
@@ -95,8 +95,8 @@ class TransactionServiceTest {
     @Test
     void transferTest() throws AccountNotFoundException, TransferTransactionException {
         transactionsService.transfer(ACCOUNT_ID, PAYEE_ACCOUNT_ID, POSITIVE_AMOUNT);
-        Long accountBalance = accountService.getAccountById(ACCOUNT_ID).getBalance();
-        Long otherAccountBalance = accountService.getAccountById(PAYEE_ACCOUNT_ID).getBalance();
+        Long accountBalance = accountService.findOne(ACCOUNT_ID).getBalance();
+        Long otherAccountBalance = accountService.findOne(PAYEE_ACCOUNT_ID).getBalance();
         assertTrue("Сумма на счете отправителя не совпадает с ожидаемой: " + accountBalance, accountBalance.equals(ACCOUNT_AMOUNT - POSITIVE_AMOUNT));
         assertTrue("Сумма на счете получателя не совпадает с ожидаемой: " + otherAccountBalance, otherAccountBalance.equals(OTHER_ACCOUNT_AMOUNT + POSITIVE_AMOUNT));
     }

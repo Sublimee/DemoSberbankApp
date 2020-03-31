@@ -74,7 +74,7 @@ public class AccountControllerTest {
 
     @Test
     public void getAccountByIdNotFoundTest() throws Exception {
-        when(accountService.getAccountById(anyLong())).thenThrow(AccountNotFoundException.class);
+        when(accountService.findOne(anyLong())).thenThrow(AccountNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/accounts/{id}", -1L))
                 .andExpect(status().isNotFound());
     }
@@ -87,7 +87,7 @@ public class AccountControllerTest {
 
         Account expectedAccount = new Account(1L, client, 50L);
 
-        when(accountService.getAccountById(anyLong())).thenReturn(expectedAccount);
+        when(accountService.findOne(anyLong())).thenReturn(expectedAccount);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/accounts/{id}", 1L))
                 .andExpect(status().isOk())
                 .andReturn();

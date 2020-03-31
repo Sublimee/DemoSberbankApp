@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Range;
 import ru.sberbank.demo.app.model.Account;
+import ru.sberbank.demo.app.model.IEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @MappedSuperclass
 @Data
 @EqualsAndHashCode
-abstract class AbstractTransaction {
+abstract class AbstractTransaction implements IEntity {
 
     @Id
     @GeneratedValue

@@ -13,6 +13,4 @@ public interface AccountRepository extends PagingAndSortingRepository<Account, L
 
     Optional<List<Account>> getAccountsByClientId(final Long clientId);
 
-    Optional<Account> getAccountById(final Long id);
-
 }

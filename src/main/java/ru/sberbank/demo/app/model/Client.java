@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class Client {
+public class Client implements IEntity {
 
     @Id
     @GeneratedValue

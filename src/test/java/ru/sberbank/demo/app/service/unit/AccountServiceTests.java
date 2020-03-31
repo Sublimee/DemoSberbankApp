@@ -40,15 +40,15 @@ public class AccountServiceTests {
 
     @Test
     public void getAccountByIdTest() throws Exception {
-        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.of(new Account()));
-        Account account = accountService.getAccountById(anyLong());
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.of(new Account()));
+        Account account = accountService.findOne(anyLong());
         assertEquals(new Account(), account);
     }
 
     @Test
     public void getAccountByIdExceptionTest() {
-        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(AccountNotFoundException.class, () -> accountService.getAccountById(anyLong()));
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(AccountNotFoundException.class, () -> accountService.findOne(anyLong()));
     }
 
     @Test

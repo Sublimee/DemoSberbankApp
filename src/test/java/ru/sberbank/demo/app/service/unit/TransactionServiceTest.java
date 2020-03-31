@@ -56,7 +56,7 @@ class TransactionServiceTest {
     void depositTest() throws DepositTransactionException, AccountNotFoundException {
         Account account = new Account();
         account.setBalance(POSITIVE_AMOUNT);
-        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.of(account));
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.of(account));
         when(depositTransactionRepository.save(any(DepositTransaction.class))).thenReturn(new DepositTransaction());
         DepositTransaction depositTransaction = transactionsService.deposit(1L, POSITIVE_AMOUNT);
         assertEquals(depositTransaction, new DepositTransaction());
@@ -77,7 +77,7 @@ class TransactionServiceTest {
     void withdrawTest() throws AccountNotFoundException, WithdrawTransactionException {
         Account account = new Account();
         account.setBalance(POSITIVE_AMOUNT);
-        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.of(account));
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.of(account));
         when(withdrawTransactionRepository.save(any(WithdrawTransaction.class))).thenReturn(new WithdrawTransaction());
         WithdrawTransaction withdrawTransaction = transactionsService.withdraw(1L, POSITIVE_AMOUNT);
         assertEquals(withdrawTransaction, new WithdrawTransaction());
@@ -98,13 +98,13 @@ class TransactionServiceTest {
     void withdrawExceedsAccountBalanceExceptionTest() {
         Account account = new Account();
         account.setBalance(ZERO_AMOUNT);
-        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.of(account));
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.of(account));
         assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(1L, POSITIVE_AMOUNT));
     }
 
     @Test
     void withdrawAccountNotFoundExceptionTest() {
-        when(accountRepository.getAccountById(anyLong())).thenReturn(Optional.empty());
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.empty());
         assertThrows(AccountNotFoundException.class, () -> transactionsService.withdraw(1L, POSITIVE_AMOUNT));
     }
 
@@ -131,7 +131,7 @@ class TransactionServiceTest {
         Account depositAccount = new Account();
         depositAccount.setBalance(POSITIVE_AMOUNT);
         depositAccount.setId(2L);
-        when(accountRepository.getAccountById(anyLong()))
+        when(accountRepository.findById(anyLong()))
                 .thenReturn(Optional.of(withdrawAccount))
                 .thenReturn(Optional.of(depositAccount));
         when(transferTransactionRepository.save(any(TransferTransaction.class))).thenReturn(new TransferTransaction());
@@ -147,7 +147,7 @@ class TransactionServiceTest {
         withdrawAccount.setBalance(POSITIVE_AMOUNT);
         Account depositAccount = new Account();
         depositAccount.setBalance(POSITIVE_AMOUNT);
-        when(accountRepository.getAccountById(anyLong()))
+        when(accountRepository.findById(anyLong()))
                 .thenReturn(Optional.of(withdrawAccount))
                 .thenReturn(Optional.of(depositAccount));
         assertThrows(TransferTransactionException.class, () -> transactionsService.transfer(1L, 2L, 2 * POSITIVE_AMOUNT));

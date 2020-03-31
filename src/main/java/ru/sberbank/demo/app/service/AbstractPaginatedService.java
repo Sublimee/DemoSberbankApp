@@ -1,42 +1,38 @@
 package ru.sberbank.demo.app.service;
 
 
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sberbank.demo.app.exception.ResourceNotFoundException;
+import ru.sberbank.demo.app.model.IEntity;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public abstract class AbstractRawService<T extends IEntity> implements IRawService<T> {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+@Slf4j
+public abstract class AbstractPaginatedService<T extends IEntity> implements IPaginatedService<T> {
 
-//    @Autowired
-//    protected ApplicationEventPublisher eventPublisher;
-
-//    public AbstractRawService() {
-//        super();
-//    }
-
-    // API
-
-    // find - one
+    // find
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<T> findOne(final long id) {
-        return getDao().findById(id);
+    public T findOne(final long id) {
+        Optional<T> resource = getDao().findById(id);
+        if (!resource.isPresent()) {
+            log.error("Ресурс с идентификатором " + id + " не найден");
+            throw new ResourceNotFoundException("Ресурс с идентификатором " + id + " не найден");
+        }
+        return resource.get();
     }
-
-    // find - all
 
     @Override
     @Transactional(readOnly = true)
@@ -75,25 +71,17 @@ public abstract class AbstractRawService<T extends IEntity> implements IRawServi
         return IterableUtils.toList(getDao().findAll(sortInfo));
     }
 
-    // save/create/persist
+    // save/create/persist/update/merge/delete
 
     @Override
-    public T create(final T entity) {
-        checkNotNull(entity);
-
+    public T create(@NonNull final T entity) {
         return getDao().save(entity);
     }
 
-    // update/merge
-
     @Override
-    public void update(final T entity) {
-        checkNotNull(entity);
-
+    public void update(@NonNull final T entity) {
         getDao().save(entity);
     }
-
-    // delete
 
     @Override
     public void deleteAll() {
@@ -103,7 +91,10 @@ public abstract class AbstractRawService<T extends IEntity> implements IRawServi
     @Override
     public void delete(final long id) {
         final Optional<T> entity = getDao().findById(id);
-        getDao().delete(ServicePreconditions.checkEntityExists(entity));
+        if (!entity.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+        getDao().delete(entity.get());
     }
 
     // count
@@ -113,13 +104,7 @@ public abstract class AbstractRawService<T extends IEntity> implements IRawServi
         return getDao().count();
     }
 
-    // template method
-
     protected abstract PagingAndSortingRepository<T, Long> getDao();
-
-    protected abstract JpaSpecificationExecutor<T> getSpecificationExecutor();
-
-    // template
 
     protected final Sort constructSort(final String sortBy, final String sortOrder) {
         Sort sortInfo = null;
@@ -127,14 +112,6 @@ public abstract class AbstractRawService<T extends IEntity> implements IRawServi
             sortInfo = Sort.by(Direction.fromString(sortOrder), sortBy);
         }
         return sortInfo;
-    }
-
-    private <T> T checkNotNull(T reference) {
-        if (reference == null) {
-            throw new NullPointerException();
-        } else {
-            return reference;
-        }
     }
 
 }

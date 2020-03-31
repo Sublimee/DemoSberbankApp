@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
-import ru.sberbank.demo.app.service.IEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
