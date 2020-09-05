@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ru.sberbank.demo.app.model.Account;
-import ru.sberbank.demo.app.model.IEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
