@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sberbank.demo.app.exception.AccountNotFoundException;
+import ru.sberbank.demo.app.exception.ResourceNotFoundException;
 import ru.sberbank.demo.app.exception.transaction.DepositTransactionException;
 import ru.sberbank.demo.app.exception.transaction.TransferTransactionException;
 import ru.sberbank.demo.app.exception.transaction.WithdrawTransactionException;
@@ -11,26 +12,27 @@ import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.model.transaction.DepositTransaction;
 import ru.sberbank.demo.app.model.transaction.TransferTransaction;
 import ru.sberbank.demo.app.model.transaction.WithdrawTransaction;
-import ru.sberbank.demo.app.repository.AccountRepository;
 import ru.sberbank.demo.app.repository.DepositTransactionRepository;
 import ru.sberbank.demo.app.repository.TransferTransactionRepository;
 import ru.sberbank.demo.app.repository.WithdrawTransactionRepository;
+import ru.sberbank.demo.app.service.account.AccountService;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class TransactionServiceImpl implements TransactionService {
 
-    private AccountRepository accountRepository;
+    private AccountService accountService;
     private DepositTransactionRepository depositTransactionRepository;
     private TransferTransactionRepository transferTransactionRepository;
     private WithdrawTransactionRepository withdrawTransactionRepository;
 
+
     @Autowired
-    public void setAccountRepository(final AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     @Autowired
@@ -59,7 +61,7 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Transactional
-    public DepositTransaction deposit(final Long accountId, final Long depositAmount) throws AccountNotFoundException, DepositTransactionException {
+    public DepositTransaction deposit(final UUID accountId, final Long depositAmount) throws ResourceNotFoundException {
         checkDepositTransactionParams(depositAmount);
         return getDepositTransaction(depositAmount, getDepositAccount(accountId, depositAmount));
     }
@@ -75,7 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Transactional
-    public WithdrawTransaction withdraw(final Long accountId, final Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
+    public WithdrawTransaction withdraw(final UUID accountId, final Long withdrawAmount) throws ResourceNotFoundException {
         checkWithdrawTransactionParams(withdrawAmount);
         return getWithdrawTransaction(withdrawAmount, getWithdrawAccount(accountId, withdrawAmount));
     }
@@ -92,22 +94,13 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Transactional
-    public TransferTransaction transfer(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws TransferTransactionException, AccountNotFoundException {
+    public TransferTransaction transfer(final UUID fromAccountId, final UUID toAccountId, final Long transferAmount) throws ResourceNotFoundException {
         checkTransferTransactionParams(fromAccountId, toAccountId, transferAmount);
         return getTransferTransaction(fromAccountId, toAccountId, transferAmount);
     }
 
-    private Account getAccount(final Long accountId) throws AccountNotFoundException {
-        Optional<Account> accountById = accountRepository.findById(accountId);
-        if (!accountById.isPresent()) {
-            log.error("Счет с идентификатором" + accountId + "не найден");
-            throw new AccountNotFoundException("Счет с идентификатором" + accountId + "не найден");
-        }
-        return accountById.get();
-    }
-
-    private Account getWithdrawAccount(final Long accountId, final Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
-        Account account = getAccount(accountId);
+    private Account getWithdrawAccount(final UUID accountId, final Long withdrawAmount) throws ResourceNotFoundException {
+        Account account = accountService.findOne(accountId);
         if (account.getBalance() < withdrawAmount) {
             log.error("Имеющейся на счете " + accountId + " суммы недостаточно для завершения операции.");
             throw new WithdrawTransactionException("Имеющейся на счете " + accountId + " суммы недостаточно для завершения операции");
@@ -116,8 +109,8 @@ public class TransactionServiceImpl implements TransactionService {
         return account;
     }
 
-    private Account getDepositAccount(final Long accountId, final Long transferAmount) throws AccountNotFoundException {
-        Account account = getAccount(accountId);
+    private Account getDepositAccount(final UUID accountId, final Long transferAmount) throws ResourceNotFoundException {
+        Account account = accountService.findOne(accountId);
         account.setBalance(account.getBalance() + transferAmount);
         return account;
     }
@@ -136,7 +129,7 @@ public class TransactionServiceImpl implements TransactionService {
         return withdrawTransactionRepository.save(withdrawTransaction);
     }
 
-    private TransferTransaction getTransferTransaction(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws AccountNotFoundException, TransferTransactionException {
+    private TransferTransaction getTransferTransaction(final UUID fromAccountId, final UUID toAccountId, final Long transferAmount) throws ResourceNotFoundException {
         TransferTransaction transferTransaction = new TransferTransaction();
         try {
             transferTransaction.setAccount(getWithdrawAccount(fromAccountId, transferAmount));
@@ -149,7 +142,7 @@ public class TransactionServiceImpl implements TransactionService {
         return transferTransactionRepository.save(transferTransaction);
     }
 
-    private void checkTransferTransactionParams(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws TransferTransactionException {
+    private void checkTransferTransactionParams(final UUID fromAccountId, final UUID toAccountId, final Long transferAmount) throws TransferTransactionException {
         if (fromAccountId.equals(toAccountId)) {
             log.error("Переводы не осуществляются внутри одного счета: " + fromAccountId);
             throw new TransferTransactionException("Переводы не осуществляются внутри одного счета");

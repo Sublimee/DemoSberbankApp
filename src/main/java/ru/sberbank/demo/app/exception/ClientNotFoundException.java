@@ -3,8 +3,12 @@ package ru.sberbank.demo.app.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "CLIENT_NOT_FOUND_EXCEPTION")
-public class ClientNotFoundException extends RuntimeException {
+import static ru.sberbank.demo.app.exception.ClientNotFoundException.ERROR_CODE;
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = ERROR_CODE)
+public class ClientNotFoundException extends ResourceNotFoundException {
+
+    protected static final String ERROR_CODE = "CLIENT_NOT_FOUND_EXCEPTION";
 
     public ClientNotFoundException() {
     }

@@ -1,13 +1,14 @@
 package ru.sberbank.demo.app.service;
 
+import ru.sberbank.demo.app.exception.ResourceNotFoundException;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 public interface IOperations<T extends Serializable> {
 
-    // find - one
-
-    T findOne(final long id);
+    T findOne(final UUID id) throws ResourceNotFoundException;
 
     /**
      * - contract: if nothing is found, an empty list will be returned to the calling client <br>
@@ -29,21 +30,13 @@ public interface IOperations<T extends Serializable> {
      */
     List<T> findAllPaginatedAndSorted(final int page, final int size, final String sortBy, final String sortOrder);
 
-    // create
-
-    T create(final T resource);
-
-    // update
+    T create(final T resource) throws Exception;
 
     void update(final T resource);
 
-    // delete
-
-    void delete(final long id);
+    void delete(final UUID id) throws ResourceNotFoundException;
 
     void deleteAll();
-
-    // count
 
     long count();
 

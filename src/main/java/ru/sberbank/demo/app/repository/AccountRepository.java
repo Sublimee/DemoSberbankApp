@@ -7,10 +7,11 @@ import ru.sberbank.demo.app.model.Account;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface AccountRepository extends PagingAndSortingRepository<Account, Long>, JpaSpecificationExecutor<Account> {
+public interface AccountRepository extends PagingAndSortingRepository<Account, UUID>, JpaSpecificationExecutor<Account> {
 
-    Optional<List<Account>> getAccountsByClientId(final Long clientId);
+    Optional<List<Account>> getAccountsByClientId(final UUID clientId);
 
 }

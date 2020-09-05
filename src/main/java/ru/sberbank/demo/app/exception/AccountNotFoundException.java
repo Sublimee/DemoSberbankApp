@@ -3,8 +3,12 @@ package ru.sberbank.demo.app.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "ACCOUNT_NOT_FOUND_EXCEPTION")
-public class AccountNotFoundException extends RuntimeException {
+import static ru.sberbank.demo.app.exception.AccountNotFoundException.ERROR_CODE;
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = ERROR_CODE)
+public class AccountNotFoundException extends ResourceNotFoundException {
+
+    protected static final String ERROR_CODE = "ACCOUNT_NOT_FOUND_EXCEPTION";
 
     public AccountNotFoundException() {
     }

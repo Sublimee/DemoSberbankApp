@@ -13,23 +13,42 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sberbank.demo.app.exception.ResourceNotFoundException;
 import ru.sberbank.demo.app.model.IEntity;
 
-import javax.persistence.EntityNotFoundException;
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Transactional
 @Slf4j
-public abstract class AbstractPaginatedService<T extends IEntity> implements IPaginatedService<T> {
+public abstract class AbstractPaginatedService<T extends IEntity, E extends ResourceNotFoundException> implements IPaginatedService<T> {
 
-    // find
+    private Constructor<? extends E> ctor;
+
+    public AbstractPaginatedService(Class<? extends E> impl) {
+        try {
+            this.ctor = impl.getConstructor(String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(42);
+        }
+    }
+
+    public E getInstanceOfE(String msg) {
+        try {
+            return ctor.newInstance(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(42);
+        }
+        return null;
+    }
 
     @Override
     @Transactional(readOnly = true)
-    public T findOne(final long id) {
-        Optional<T> resource = getDao().findById(id);
-        if (!resource.isPresent()) {
-            log.error("Ресурс с идентификатором " + id + " не найден");
-            throw new ResourceNotFoundException("Ресурс с идентификатором " + id + " не найден");
+    public T findOne(final UUID id) throws ResourceNotFoundException {
+        final Optional<T> resource = getDao().findById(id);
+        if (resource.isEmpty()) {
+            throw getInstanceOfE("Ресурс с идентификатором " + id + " не найден");
         }
         return resource.get();
     }
@@ -71,8 +90,6 @@ public abstract class AbstractPaginatedService<T extends IEntity> implements IPa
         return IterableUtils.toList(getDao().findAll(sortInfo));
     }
 
-    // save/create/persist/update/merge/delete
-
     @Override
     public T create(@NonNull final T entity) {
         return getDao().save(entity);
@@ -89,22 +106,16 @@ public abstract class AbstractPaginatedService<T extends IEntity> implements IPa
     }
 
     @Override
-    public void delete(final long id) {
-        final Optional<T> entity = getDao().findById(id);
-        if (!entity.isPresent()) {
-            throw new EntityNotFoundException();
-        }
-        getDao().delete(entity.get());
+    public void delete(final UUID id) throws ResourceNotFoundException {
+        getDao().delete(findOne(id));
     }
-
-    // count
 
     @Override
     public long count() {
         return getDao().count();
     }
 
-    protected abstract PagingAndSortingRepository<T, Long> getDao();
+    protected abstract PagingAndSortingRepository<T, UUID> getDao();
 
     protected final Sort constructSort(final String sortBy, final String sortOrder) {
         Sort sortInfo = null;

@@ -5,6 +5,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import ru.sberbank.demo.app.model.transaction.TransferTransaction;
 
+import java.util.UUID;
+
 @Repository
-public interface TransferTransactionRepository extends PagingAndSortingRepository<TransferTransaction, Long>, JpaSpecificationExecutor<TransferTransaction> {
+public interface TransferTransactionRepository extends PagingAndSortingRepository<TransferTransaction, UUID>, JpaSpecificationExecutor<TransferTransaction> {
 }

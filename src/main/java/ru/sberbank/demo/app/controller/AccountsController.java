@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sberbank.demo.app.exception.AccountNotFoundException;
-import ru.sberbank.demo.app.exception.ClientNotFoundException;
 import ru.sberbank.demo.app.model.Account;
 import ru.sberbank.demo.app.service.account.AccountService;
 
 import java.util.List;
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/accounts")
@@ -26,12 +26,12 @@ public class AccountsController {
     }
 
     @GetMapping("/clients/{id}")
-    public ResponseEntity<List<Account>> getClientAccounts(@PathVariable("id") final Long clientId) throws ClientNotFoundException, AccountNotFoundException {
+    public ResponseEntity<List<Account>> getClientAccounts(@PathVariable("id") final UUID clientId) throws Exception {
         return ResponseEntity.status(HttpStatus.OK).body(accountService.getClientAccounts(clientId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Account> getAccountById(@PathVariable("id") final Long id) throws AccountNotFoundException {
+    public ResponseEntity<Account> getAccountById(@PathVariable("id") final UUID id) throws Exception {
         return ResponseEntity.status(HttpStatus.OK).body(accountService.findOne(id));
     }
 

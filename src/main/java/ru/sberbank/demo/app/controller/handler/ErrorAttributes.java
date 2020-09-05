@@ -20,11 +20,10 @@ class ErrorAttributes extends DefaultErrorAttributes {
     @Override
     public Map<String, Object> getErrorAttributes(final WebRequest webRequest, final boolean includeStackTrace) {
         final Map<String, Object> defaultErrorAttributes = super.getErrorAttributes(webRequest, false);
-        defaultErrorAttributes.put("detailMessage", super.getError(webRequest).getMessage());
-        final ErrorResponse errorResponse = ErrorResponse.fromDefaultAttributeMap(
+        final ExceptionResponse exceptionResponse = ExceptionResponse.fromDefaultAttributeMap(
                 currentApiVersion, defaultErrorAttributes, sendReportUri
         );
-        return errorResponse.toAttributeMap();
+        return exceptionResponse.toAttributeMap();
     }
 
 }

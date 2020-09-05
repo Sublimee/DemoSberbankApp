@@ -4,21 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.*;
 
-public class ErrorResponse {
+public class ExceptionResponse {
 
     private final String apiVersion;
     private final ErrorBlock error;
 
-    public ErrorResponse(final String apiVersion, final String code, final String message, final String domain,
-                         final String reason, final String errorMessage, final String errorReportUri) {
+    public ExceptionResponse(final String apiVersion, final String code, final String message, final String domain,
+                             final String reason, final String errorMessage, final String errorReportUri) {
         this.apiVersion = apiVersion;
         this.error = new ErrorBlock(code, message, domain, reason, errorMessage, errorReportUri);
     }
 
-    public static ErrorResponse fromDefaultAttributeMap(final String apiVersion,
-                                                        final Map<String, Object> defaultErrorAttributes,
-                                                        final String sendReportBaseUri) {
-        return new ErrorResponse(
+    public static ExceptionResponse fromDefaultAttributeMap(final String apiVersion,
+                                                            final Map<String, Object> defaultErrorAttributes,
+                                                            final String sendReportBaseUri) {
+        return new ExceptionResponse(
                 apiVersion,
                 ((Integer) defaultErrorAttributes.get("status")).toString(),
                 (String) defaultErrorAttributes.getOrDefault("message", "no message available"),
@@ -30,10 +30,10 @@ public class ErrorResponse {
     }
 
     public Map<String, Object> toAttributeMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("apiVersion", apiVersion);
-        map.put("error", error);
-        return map;
+        return Map.of(
+                "apiVersion", apiVersion,
+                "error", error
+        );
     }
 
     public String getApiVersion() {
@@ -57,8 +57,9 @@ public class ErrorResponse {
             this.code = code;
             this.message = message;
             this.uniqueId = UUID.randomUUID();
-            this.errors = new ArrayList<>();
-            errors.add(new Error(domain, reason, errorMessage, errorReportUri + "?id=" + uniqueId));
+            this.errors = List.of(
+                    new Error(domain, reason, errorMessage, errorReportUri + "?id=" + uniqueId)
+            );
         }
 
         private ErrorBlock(final UUID uniqueId, final String code, final String message, final List<Error> errors) {
