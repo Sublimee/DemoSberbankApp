@@ -1,12 +1,12 @@
 package ru.sberbank.demo.app.model.request;
 
-import lombok.Data;
+
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-@Data
+
 public class TransferRequest {
 
     @Range(min = 0, message = "Неверное значение идентификатора счета отправителя")
@@ -21,4 +21,27 @@ public class TransferRequest {
     @NotNull
     private Long amount;
 
+    public UUID getFromAccountId() {
+        return fromAccountId;
+    }
+
+    public void setFromAccountId(UUID fromAccountId) {
+        this.fromAccountId = fromAccountId;
+    }
+
+    public UUID getToAccountId() {
+        return toAccountId;
+    }
+
+    public void setToAccountId(UUID toAccountId) {
+        this.toAccountId = toAccountId;
+    }
+
+    public Long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Long amount) {
+        this.amount = amount;
+    }
 }

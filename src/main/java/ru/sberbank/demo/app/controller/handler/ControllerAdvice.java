@@ -1,7 +1,6 @@
 package ru.sberbank.demo.app.controller.handler;
 
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 
 @ConditionalOnProperty(name = "app.errors.controlleradvice", havingValue = "true")
 @RestControllerAdvice
-@Slf4j
 public class ControllerAdvice {
 
     @Value("${app.sendreport.uri}")

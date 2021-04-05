@@ -1,20 +1,13 @@
 package ru.sberbank.demo.app.model.transaction;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+
 import ru.sberbank.demo.app.model.Account;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Data
 @Table(name = "transfers")
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class TransferTransaction extends AbstractTransaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,4 +15,11 @@ public class TransferTransaction extends AbstractTransaction {
     @NotNull
     private Account payee;
 
+    public Account getPayee() {
+        return payee;
+    }
+
+    public void setPayee(Account payee) {
+        this.payee = payee;
+    }
 }

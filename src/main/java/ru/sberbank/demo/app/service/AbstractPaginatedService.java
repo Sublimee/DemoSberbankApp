@@ -1,14 +1,13 @@
 package ru.sberbank.demo.app.service;
 
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sberbank.demo.app.exception.ResourceNotFoundException;
 import ru.sberbank.demo.app.model.IEntity;
@@ -19,7 +18,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Transactional
-@Slf4j
 public abstract class AbstractPaginatedService<T extends IEntity, E extends ResourceNotFoundException> implements IPaginatedService<T> {
 
     private Constructor<? extends E> ctor;
@@ -31,16 +29,6 @@ public abstract class AbstractPaginatedService<T extends IEntity, E extends Reso
             e.printStackTrace();
             System.exit(42);
         }
-    }
-
-    public E getInstanceOfE(String msg) {
-        try {
-            return ctor.newInstance(msg);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(42);
-        }
-        return null;
     }
 
     @Override
@@ -123,6 +111,16 @@ public abstract class AbstractPaginatedService<T extends IEntity, E extends Reso
             sortInfo = Sort.by(Direction.fromString(sortOrder), sortBy);
         }
         return sortInfo;
+    }
+
+    private E getInstanceOfE(String msg) {
+        try {
+            return ctor.newInstance(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(42);
+        }
+        return null;
     }
 
 }
