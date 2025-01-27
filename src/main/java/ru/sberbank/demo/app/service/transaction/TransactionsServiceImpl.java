@@ -100,7 +100,7 @@ public class TransactionsServiceImpl implements TransactionsService {
     private Account getAccount(final Long accountId) throws AccountNotFoundException {
         Optional<Account> accountById = accountsRepository.getAccountById(accountId);
         if (!accountById.isPresent()) {
-            log.error("Счет с идентификатором" + accountId + "не найден");
+            log.error("Счет с идентификатором {} не найден", accountId);
             throw new AccountNotFoundException("Счет с идентификатором" + accountId + "не найден");
         }
         return accountById.get();
@@ -109,7 +109,7 @@ public class TransactionsServiceImpl implements TransactionsService {
     private Account getWithdrawAccount(final Long accountId, final Long withdrawAmount) throws AccountNotFoundException, WithdrawTransactionException {
         Account account = getAccount(accountId);
         if (account.getBalance() < withdrawAmount) {
-            log.error("Имеющейся на счете " + accountId + " суммы недостаточно для завершения операции.");
+            log.error("Имеющейся на счете {} суммы недостаточно для завершения операции.", accountId);
             throw new WithdrawTransactionException("Имеющейся на счете " + accountId + " суммы недостаточно для завершения операции");
         }
         account.setBalance(account.getBalance() - withdrawAmount);
@@ -151,11 +151,11 @@ public class TransactionsServiceImpl implements TransactionsService {
 
     private void checkTransferTransactionParams(final Long fromAccountId, final Long toAccountId, final Long transferAmount) throws TransferTransactionException {
         if (fromAccountId.equals(toAccountId)) {
-            log.error("Переводы не осуществляются внутри одного счета: " + fromAccountId);
+            log.error("Переводы не осуществляются внутри одного счета: {}", fromAccountId);
             throw new TransferTransactionException("Переводы не осуществляются внутри одного счета");
         }
         if (transferAmount < 0) {
-            log.error("Сумма перевода не может быть задана отрицательным числом: " + transferAmount);
+            log.error("Сумма перевода не может быть задана отрицательным числом: {}", transferAmount);
             throw new TransferTransactionException("Сумма перевода не может быть задана отрицательным числом: " + transferAmount);
         }
         if (transferAmount == 0) {
@@ -166,7 +166,7 @@ public class TransactionsServiceImpl implements TransactionsService {
 
     private void checkWithdrawTransactionParams(final Long withdrawAmount) throws WithdrawTransactionException {
         if (withdrawAmount < 0) {
-            log.error("Сумма снятия не может быть задана отрицательным числом: " + withdrawAmount);
+            log.error("Сумма снятия не может быть задана отрицательным числом: {}", withdrawAmount);
             throw new WithdrawTransactionException("Сумма снятия не может быть задана отрицательным числом: " + withdrawAmount);
         }
         if (withdrawAmount == 0) {
@@ -177,7 +177,7 @@ public class TransactionsServiceImpl implements TransactionsService {
 
     private void checkDepositTransactionParams(final Long depositAmount) throws DepositTransactionException {
         if (depositAmount < 0) {
-            log.error("Сумма пополнения не может быть задана отрицательным числом: " + depositAmount);
+            log.error("Сумма пополнения не может быть задана отрицательным числом: {}", depositAmount);
             throw new DepositTransactionException("Сумма пополнения не может быть задана отрицательным числом: " + depositAmount);
         }
         if (depositAmount == 0) {

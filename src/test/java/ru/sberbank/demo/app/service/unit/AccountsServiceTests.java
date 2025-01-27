@@ -30,16 +30,16 @@ import static org.mockito.Mockito.when;
 public class AccountsServiceTests {
 
     @Mock
-    AccountsRepository accountsRepository;
+    private AccountsRepository accountsRepository;
 
     @Mock
-    ClientsRepository clientsRepository;
+    private ClientsRepository clientsRepository;
 
     @InjectMocks
-    AccountsService accountsService = new AccountsServiceImpl();
+    private final AccountsService accountsService = new AccountsServiceImpl();
 
     @Test
-    public void getAccountByIdTest() throws Exception {
+    public void getAccountByIdTest() {
         when(accountsRepository.getAccountById(anyLong())).thenReturn(Optional.of(new Account()));
         Account account = accountsService.getAccountById(anyLong());
         assertEquals(new Account(), account);

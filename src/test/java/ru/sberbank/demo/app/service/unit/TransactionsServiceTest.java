@@ -33,9 +33,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TransactionsServiceTest {
 
-    private static Long POSITIVE_AMOUNT = 50L;
-    private static Long NEGATIVE_AMOUNT = -50L;
-    private static Long ZERO_AMOUNT = 0L;
+    private static final Long POSITIVE_AMOUNT = 50L;
+    private static final Long NEGATIVE_AMOUNT = -50L;
+    private static final Long ZERO_AMOUNT = 0L;
 
     @Mock
     private AccountsRepository accountsRepository;
