@@ -52,6 +52,41 @@ class TransactionsServiceTest {
     @InjectMocks
     private TransactionsService transactionsService = new TransactionsServiceImpl();
 
+    /*
+        Шаг 1: Определяем свойства корректности
+
+        0. Транзакции должны выполняться с существующими счетами.
+        1. Баланс счета не может стать отрицательным
+        2. Баланс счета не может переполниться.
+        3. Нельзя выполнять транзакции с отрицательной или нулевой суммой.
+        4. Переводы внутри одного счета запрещены.
+        5. Баланс должен точно соответствовать результату выполненной транзакции.
+        6. Последовательности операций должны быть консистентны.
+            Результат операций (пополнение, снятие, перевод) должен быть консистентным при выполнении в произвольной последовательности.
+
+        Шаг 2: Выбор способа тестирования
+
+        0. Модульные тесты
+        1. Модульные тесты, обзор кода
+        2. Модульные тесты, обзор кода
+        3. Модульные тесты
+        4. Модульные тесты
+        5. Модульные тесты, фазз-тестирование
+        6. Фазз-тестирование
+     */
+
+    /*
+        Проверка свойства 0
+     */
+    @Test
+    void depositAccountNotFoundExceptionTest() {
+        when(accountsRepository.getAccountById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(AccountNotFoundException.class, () -> transactionsService.deposit(1L, POSITIVE_AMOUNT));
+    }
+
+    /*
+        Проверка свойства 5
+     */
     @Test
     void depositTest() throws DepositTransactionException, AccountNotFoundException {
         Account account = new Account();
@@ -63,16 +98,43 @@ class TransactionsServiceTest {
         assertEquals(account.getBalance(), 2 * POSITIVE_AMOUNT);
     }
 
+    /*
+        Проверка свойства 3
+     */
     @Test
     void depositZeroAmountExceptionTest() {
         assertThrows(DepositTransactionException.class, () -> transactionsService.deposit(1L, ZERO_AMOUNT));
     }
 
+    /*
+        Проверка свойства 3
+     */
     @Test
     void depositNegativeAmountExceptionTest() {
         assertThrows(DepositTransactionException.class, () -> transactionsService.deposit(1L, NEGATIVE_AMOUNT));
     }
 
+    /*
+        Проверка свойства 2
+     */
+    @Test
+    void depositOverflowTest() {
+        Long accountId = 1L;
+        Long depositAmount = Long.MAX_VALUE;
+
+        Account account = new Account();
+        account.setId(accountId);
+        account.setBalance(Long.MAX_VALUE - 1);
+        when(accountsRepository.getAccountById(accountId)).thenReturn(Optional.of(account));
+
+        assertThrows(DepositTransactionException.class,
+                () -> transactionsService.deposit(accountId, depositAmount),
+                "Пополнение счета должно выбрасывать исключение при переполнении баланса");
+    }
+
+    /*
+        Проверка свойства 5
+     */
     @Test
     void withdrawTest() throws AccountNotFoundException, WithdrawTransactionException {
         Account account = new Account();
@@ -84,16 +146,25 @@ class TransactionsServiceTest {
         assertEquals(account.getBalance(), 0L);
     }
 
+    /*
+        Проверка свойства 3
+     */
     @Test
     void withdrawZeroAmountExceptionTest() {
         assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(1L, ZERO_AMOUNT));
     }
 
+    /*
+        Проверка свойства 3
+     */
     @Test
     void withdrawNegativeAmountExceptionTest() {
         assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(1L, NEGATIVE_AMOUNT));
     }
 
+    /*
+        Проверка свойства 1
+     */
     @Test
     void withdrawExceedsAccountBalanceExceptionTest() {
         Account account = new Account();
@@ -102,27 +173,68 @@ class TransactionsServiceTest {
         assertThrows(WithdrawTransactionException.class, () -> transactionsService.withdraw(1L, POSITIVE_AMOUNT));
     }
 
+    /*
+        Проверка свойства 0
+     */
     @Test
     void withdrawAccountNotFoundExceptionTest() {
         when(accountsRepository.getAccountById(anyLong())).thenReturn(Optional.empty());
         assertThrows(AccountNotFoundException.class, () -> transactionsService.withdraw(1L, POSITIVE_AMOUNT));
     }
 
+    /*
+        Проверка свойства 0
+     */
+    @Test
+    void toTransferAccountNotFoundExceptionTest() {
+        long fromAccountId = 1L;
+        long toAccountId = 2L;
+        Account fromAccount = new Account();
+        fromAccount.setBalance(POSITIVE_AMOUNT);
+        fromAccount.setId(fromAccountId);
+        when(accountsRepository.getAccountById(fromAccountId)).thenReturn(Optional.of(fromAccount));
+        when(accountsRepository.getAccountById(toAccountId)).thenReturn(Optional.empty());
+        assertThrows(AccountNotFoundException.class, () -> transactionsService.transfer(fromAccountId, toAccountId, POSITIVE_AMOUNT));
+    }
+
+    /*
+        Проверка свойства 0
+     */
+    @Test
+    void fromTransferAccountNotFoundExceptionTest() {
+        long fromAccountId = 1L;
+        long toAccountId = 2L;
+        when(accountsRepository.getAccountById(fromAccountId)).thenReturn(Optional.empty());
+        assertThrows(AccountNotFoundException.class, () -> transactionsService.transfer(fromAccountId, toAccountId, POSITIVE_AMOUNT));
+    }
+
+    /*
+        Проверка свойства 3
+     */
     @Test
     void transferZeroAmountExceptionTest() {
         assertThrows(TransferTransactionException.class, () -> transactionsService.transfer(1L, 2L, ZERO_AMOUNT));
     }
 
+    /*
+        Проверка свойства 4
+     */
     @Test
     void transferSameAccountExceptionTest() {
         assertThrows(TransferTransactionException.class, () -> transactionsService.transfer(1L, 1L, POSITIVE_AMOUNT));
     }
 
+    /*
+        Проверка свойства 3
+     */
     @Test
     void transferNegativeAmountExceptionTest() {
         assertThrows(TransferTransactionException.class, () -> transactionsService.transfer(1L, 2L, NEGATIVE_AMOUNT));
     }
 
+    /*
+        Проверка свойства 5
+     */
     @Test
     void transferTest() throws AccountNotFoundException, TransferTransactionException {
         Account withdrawAccount = new Account();
@@ -141,6 +253,9 @@ class TransactionsServiceTest {
         assertEquals(depositAccount.getBalance(), 100L);
     }
 
+    /*
+        Проверка свойства 1
+     */
     @Test
     void transferExceedAmountExceptionTest() {
         Account withdrawAccount = new Account();
@@ -153,4 +268,22 @@ class TransactionsServiceTest {
         assertThrows(TransferTransactionException.class, () -> transactionsService.transfer(1L, 2L, 2 * POSITIVE_AMOUNT));
     }
 
+    /*
+        Проверка свойства 2
+     */
+    @Test
+    void transferOverflowTest() {
+        Long fromAccountId = 1L;
+        Long toAccountId = 2L;
+        Long transferAmount = Long.MAX_VALUE;
+
+        Account fromAccount = new Account();
+        fromAccount.setBalance(POSITIVE_AMOUNT);
+        fromAccount.setId(1L);
+
+        when(accountsRepository.getAccountById(fromAccountId)).thenReturn(Optional.of(fromAccount));
+
+        assertThrows(TransferTransactionException.class,
+                () -> transactionsService.transfer(fromAccountId, toAccountId, transferAmount));
+    }
 }

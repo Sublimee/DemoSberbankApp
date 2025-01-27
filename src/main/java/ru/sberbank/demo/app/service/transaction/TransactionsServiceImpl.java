@@ -116,9 +116,13 @@ public class TransactionsServiceImpl implements TransactionsService {
         return account;
     }
 
-    private Account getDepositAccount(final Long accountId, final Long transferAmount) throws AccountNotFoundException {
+    private Account getDepositAccount(final Long accountId, final Long depositAmount) throws AccountNotFoundException {
         Account account = getAccount(accountId);
-        account.setBalance(account.getBalance() + transferAmount);
+        if (account.getBalance() > Long.MAX_VALUE - depositAmount) {
+            log.error("Пополнение счета {} приведет к переполнению баланса", accountId);
+            throw new DepositTransactionException("Пополнение счета приведет к переполнению баланса");
+        }
+        account.setBalance(account.getBalance() + depositAmount);
         return account;
     }
 
